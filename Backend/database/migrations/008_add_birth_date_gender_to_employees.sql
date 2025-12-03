@@ -1,0 +1,2 @@
+ALTER TABLE employees ADD COLUMN birth_date DATE NULL;
+ALTER TABLE employees ADD COLUMN gender VARCHAR(20) NULL;

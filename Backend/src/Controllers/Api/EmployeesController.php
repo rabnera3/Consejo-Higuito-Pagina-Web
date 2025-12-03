@@ -1,0 +1,138 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Controllers\Api;
+
+use App\Services\EmployeesService;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
+
+final class EmployeesController
+{
+    private EmployeesService $service;
+
+    public function __construct()
+    {
+        $this->service = new EmployeesService();
+    }
+
+    public function index(Request $request, Response $response): Response
+    {
+        $query = $request->getQueryParams();
+        $filters = [
+            'q' => trim((string) ($query['q'] ?? '')),
+            'municipio' => $query['municipio'] ?? '',
+            'departamento' => $query['departamento'] ?? '',
+            'sort' => $query['sort'] ?? 'az',
+            'scope' => $query['scope'] ?? 'all',
+        ];
+
+        /** @var array|null $user */
+        $user = $request->getAttribute('user');
+
+        $results = $this->service->listEmployees($filters, $user);
+        $filterOptions = $this->service->filters();
+
+        $response->getBody()->write(json_encode([
+            'success' => true,
+            'data' => [
+                'employees' => $results,
+                'filters' => $filterOptions,
+            ],
+        ]));
+
+        return $response
+            ->withHeader('Content-Type', 'application/json')
+            ->withStatus(200);
+    }
+
+    public function show(Request $request, Response $response, array $args): Response
+    {
+        $id = (int) ($args['id'] ?? 0);
+
+        if ($id <= 0) {
+            $response->getBody()->write(json_encode([
+                'success' => false,
+                'message' => 'ID inválido',
+            ]));
+            return $response
+                ->withHeader('Content-Type', 'application/json')
+                ->withStatus(400);
+        }
+
+        $employee = $this->service->getEmployeeById($id);
+
+        if (!$employee) {
+            $response->getBody()->write(json_encode([
+                'success' => false,
+                'message' => 'Empleado no encontrado',
+            ]));
+            return $response
+                ->withHeader('Content-Type', 'application/json')
+                ->withStatus(404);
+        }
+
+        $response->getBody()->write(json_encode([
+            'success' => true,
+            'data' => $employee,
+        ]));
+
+        return $response
+            ->withHeader('Content-Type', 'application/json')
+            ->withStatus(200);
+    }
+    public function update(Request $request, Response $response, array $args): Response
+    {
+        $id = (int) ($args['id'] ?? 0);
+        $data = (array) $request->getParsedBody();
+
+        // Basic validation
+        if ($id <= 0) {
+            $response->getBody()->write(json_encode(['success' => false, 'message' => 'ID inválido']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+
+        try {
+            $success = $this->service->updateEmployee($id, $data);
+
+            if ($success) {
+                $response->getBody()->write(json_encode(['success' => true, 'message' => 'Perfil actualizado']));
+                return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+            }
+
+            $response->getBody()->write(json_encode(['success' => false, 'message' => 'No se pudo actualizar el perfil']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        } catch (\Exception $e) {
+            file_put_contents(__DIR__ . '/../../debug_manual.log', date('Y-m-d H:i:s') . " Update Error: " . $e->getMessage() . "\n", FILE_APPEND);
+            $response->getBody()->write(json_encode(['success' => false, 'message' => 'Error del servidor: ' . $e->getMessage()]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(500);
+        }
+    }
+
+    public function uploadPhoto(Request $request, Response $response, array $args): Response
+    {
+        $id = (int) ($args['id'] ?? 0);
+        $files = $request->getUploadedFiles();
+
+        if (empty($files['image'])) {
+            $response->getBody()->write(json_encode(['success' => false, 'message' => 'No se envió ninguna imagen']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+
+        try {
+            $photoUrl = $this->service->uploadPhoto($id, $files['image']);
+            
+            $response->getBody()->write(json_encode([
+                'success' => true,
+                'message' => 'Foto actualizada',
+                'data' => ['photo_url' => $photoUrl]
+            ]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        } catch (\Exception $e) {
+            file_put_contents(__DIR__ . '/../../debug_manual.log', date('Y-m-d H:i:s') . " Upload Error: " . $e->getMessage() . "\n", FILE_APPEND);
+            $response->getBody()->write(json_encode(['success' => false, 'message' => $e->getMessage()]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(500);
+        }
+    }
+}
