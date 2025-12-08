@@ -1,5 +1,5 @@
 import { ChevronRight } from 'lucide-react';
-import { ImageWithFallback } from './figma/ImageWithFallback';
+import { ResponsiveImage } from './ResponsiveImage';
 
 type TierCard = {
   label: string;
@@ -124,7 +124,7 @@ export function ProcessMap({
             rel="noreferrer"
             className="block rounded-2xl border border-slate-100 overflow-hidden"
           >
-            <ImageWithFallback src={officialImage} alt={imageAlt} className="w-full object-contain" />
+            <ResponsiveImage src={officialImage} alt={imageAlt} className="w-full object-contain" />
           </a>
         ) : (
           <div className="space-y-3 text-sm text-slate-600">

@@ -1,5 +1,5 @@
 import { Button } from './ui/button';
-import { ImageWithFallback } from './figma/ImageWithFallback';
+import { ResponsiveImage } from './ResponsiveImage';
 import { FadeIn, Stagger, itemVariant } from './figma/animations';
 import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
@@ -42,9 +42,10 @@ export function WelcomeSection() {
               className="h-full w-full"
             >
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
-              <ImageWithFallback
+              <ResponsiveImage
                 src={new URL('../img/bienvenida.webp', import.meta.url).href}
                 alt="Community members working in agriculture"
+                sizes="(max-width: 640px) 480px, (max-width: 1024px) 768px, 600px"
                 className="w-full h-full object-cover"
               />
             </motion.div>

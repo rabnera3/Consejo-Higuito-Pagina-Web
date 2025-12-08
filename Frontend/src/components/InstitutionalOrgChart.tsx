@@ -1,4 +1,4 @@
-import { ImageWithFallback } from './figma/ImageWithFallback';
+import { ResponsiveImage } from './ResponsiveImage';
 import { Download, ExternalLink, Info } from 'lucide-react';
 import organigramaImage from '../img/organigrama.webp';
 
@@ -35,9 +35,10 @@ export function InstitutionalOrgChart() {
 
       <div className="overflow-hidden rounded-3xl border border-slate-100 bg-gradient-to-br from-white to-slate-50 p-3 shadow-inner">
         <a href={organigramaImage} target="_blank" rel="noreferrer" className="block">
-          <ImageWithFallback
+          <ResponsiveImage
             src={organigramaImage}
             alt="Organigrama institucional del Consejo Intermunicipal Higuito"
+            sizes="(max-width: 640px) 480px, (max-width: 1024px) 768px, 1200px"
             className="h-auto w-full rounded-2xl border border-white object-contain"
           />
         </a>

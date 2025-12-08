@@ -1,13 +1,14 @@
-import { ImageWithFallback } from './figma/ImageWithFallback';
+import { ResponsiveImage } from './ResponsiveImage';
 import { motion } from 'motion/react';
 
 export function CommunityBanner() {
   return (
   <section className="relative h-[400px] overflow-hidden">
       {/* Background Image */}
-      <ImageWithFallback
+      <ResponsiveImage
         src={new URL('../img/landingpage1.webp', import.meta.url).href}
         alt="Agricultural workers in the field"
+        sizes="100vw"
         className="absolute inset-0 w-full h-full object-cover object-top"
       />
       <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/30"></motion.div>

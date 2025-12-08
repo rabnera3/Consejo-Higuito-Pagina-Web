@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { ImageWithFallback } from './figma/ImageWithFallback';
+import { ResponsiveImage } from './ResponsiveImage';
 import logoImg from '../img/logo01.webp';
 
 interface NodeBoxProps {
@@ -92,7 +92,7 @@ export function HiguitoOrgChart() {
         <div className="relative mb-8 flex flex-col items-center gap-3 text-center">
           <div className="flex items-center gap-4">
             <div className="h-20 w-20 rounded-full border border-emerald-100 bg-white shadow flex items-center justify-center p-4">
-              <ImageWithFallback src={logoSrc} alt="Logo Consejo Higuito" className="w-full h-full object-contain" />
+              <ResponsiveImage src={logoSrc} alt="Logo Consejo Higuito" className="w-full h-full object-contain" />
             </div>
             <div>
               <p className="text-xs uppercase tracking-[0.3em] text-emerald-600">Consejo Intermunicipal</p>
