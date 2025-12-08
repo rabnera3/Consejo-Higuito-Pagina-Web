@@ -1,17 +1,47 @@
 import { motion, useScroll, useTransform } from 'motion/react';
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Sparkles, Users, Heart, Award, Target } from 'lucide-react';
 
 export function BannerSection() {
   const sectionRef = useRef<HTMLElement>(null);
+  const [isDesktop, setIsDesktop] = useState(true);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  useEffect(() => {
+    // Check if desktop on mount
+    const isDesktopView = window.innerWidth >= 768;
+    setIsDesktop(isDesktopView);
+    
+    // Check for prefers-reduced-motion
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mediaQuery.matches);
+    
+    const handleMediaChange = (e: MediaQueryListEvent) => {
+      setPrefersReducedMotion(e.matches);
+    };
+    
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 768);
+    };
+    
+    mediaQuery.addEventListener('change', handleMediaChange);
+    window.addEventListener('resize', handleResize);
+    
+    return () => {
+      mediaQuery.removeEventListener('change', handleMediaChange);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end start"]
   });
 
-  const y1 = useTransform(scrollYProgress, [0, 1], [0, 100]);
-  const y2 = useTransform(scrollYProgress, [0, 1], [0, -50]);
-  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [1, 1.02, 1]);
+  // Only apply parallax on desktop without reduced motion preference
+  const y1 = useTransform(scrollYProgress, [0, 1], isDesktop && !prefersReducedMotion ? [0, 100] : [0, 0]);
+  const y2 = useTransform(scrollYProgress, [0, 1], isDesktop && !prefersReducedMotion ? [0, -50] : [0, 0]);
+  const scale = useTransform(scrollYProgress, [0, 0.5, 1], isDesktop && !prefersReducedMotion ? [1, 1.02, 1] : [1, 1, 1]);
 
   return (
     <section
@@ -19,40 +49,42 @@ export function BannerSection() {
       className="py-32 bg-gradient-to-br from-green-600 via-green-700 to-emerald-900 relative overflow-hidden"
       style={{ position: 'relative' }}
     >
-      {/* Optimized animated background - reduced blur and animations */}
-      <div className="absolute inset-0 opacity-30 will-change-transform">
-        <motion.div 
-          style={{ y: y1 }}
-          className="absolute -top-20 -left-20 w-[500px] h-[500px] bg-amber-400 rounded-full blur-[100px]"
-          animate={{
-            scale: [1, 1.1, 1],
-            opacity: [0.3, 0.4, 0.3],
-          }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            ease: "linear"
-          }}
-        ></motion.div>
-        <motion.div 
-          style={{ y: y2 }}
-          className="absolute -bottom-20 -right-20 w-[600px] h-[600px] bg-teal-400 rounded-full blur-[100px]"
-          animate={{
-            scale: [1, 1.15, 1],
-            opacity: [0.3, 0.5, 0.3],
-          }}
-          transition={{
-            duration: 12,
-            repeat: Infinity,
-            ease: "linear",
-            delay: 2
-          }}
-        ></motion.div>
-      </div>
+      {/* Optimized animated background - disabled on mobile for better performance */}
+      {isDesktop && !prefersReducedMotion && (
+        <div className="absolute inset-0 opacity-30 will-change-transform">
+          <motion.div 
+            style={{ y: y1 }}
+            className="absolute -top-20 -left-20 w-[500px] h-[500px] bg-amber-400 rounded-full blur-[100px]"
+            animate={{
+              scale: [1, 1.1, 1],
+              opacity: [0.3, 0.4, 0.3],
+            }}
+            transition={{
+              duration: 10,
+              repeat: Infinity,
+              ease: "linear"
+            }}
+          ></motion.div>
+          <motion.div 
+            style={{ y: y2 }}
+            className="absolute -bottom-20 -right-20 w-[600px] h-[600px] bg-teal-400 rounded-full blur-[100px]"
+            animate={{
+              scale: [1, 1.15, 1],
+              opacity: [0.3, 0.5, 0.3],
+            }}
+            transition={{
+              duration: 12,
+              repeat: Infinity,
+              ease: "linear",
+              delay: 2
+            }}
+          ></motion.div>
+        </div>
+      )}
 
       {/* Reduced number of floating shapes for better performance */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(6)].map((_, i) => (
+        {[...Array(isDesktop ? 6 : 2)].map((_, i) => (
           <motion.div
             key={i}
             className="absolute"
@@ -60,7 +92,7 @@ export function BannerSection() {
               left: `${(i * 20) % 100}%`,
               top: `${(i * 30) % 100}%`,
             }}
-            animate={{
+            animate={prefersReducedMotion ? {} : {
               y: [0, -20, 0],
               opacity: [0.1, 0.2, 0.1],
             }}
@@ -161,10 +193,10 @@ export function BannerSection() {
             ].map((stat, i) => (
               <motion.div
                 key={i}
-                whileHover={{ 
+                whileHover={isDesktop ? { 
                   scale: 1.03, 
                   y: -5,
-                }}
+                } : {}}
                 transition={{ type: "spring", stiffness: 400, damping: 25 }}
                 className="group relative bg-white/10 backdrop-blur-md p-8 rounded-2xl border border-white/20 shadow-xl hover:shadow-2xl transition-shadow duration-300"
               >
@@ -191,18 +223,20 @@ export function BannerSection() {
         </motion.div>
       </div>
 
-      {/* Bottom wave decoration */}
-      <motion.div 
-        style={{ y: y2 }}
-        className="absolute bottom-0 left-0 right-0"
-      >
-        <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
-          <path 
-            d="M0,64L48,69.3C96,75,192,85,288,80C384,75,480,53,576,48C672,43,768,53,864,58.7C960,64,1056,64,1152,58.7C1248,53,1344,43,1392,37.3L1440,32L1440,120L1392,120C1344,120,1248,120,1152,120C1056,120,960,120,864,120C768,120,672,120,576,120C480,120,384,120,288,120C192,120,96,120,48,120L0,120Z" 
-            fill="rgba(255,255,255,0.05)"
-          />
-        </svg>
-      </motion.div>
+      {/* Bottom wave decoration - disabled on mobile */}
+      {isDesktop && (
+        <motion.div 
+          style={{ y: y2 }}
+          className="absolute bottom-0 left-0 right-0"
+        >
+          <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
+            <path 
+              d="M0,64L48,69.3C96,75,192,85,288,80C384,75,480,53,576,48C672,43,768,53,864,58.7C960,64,1056,64,1152,58.7C1248,53,1344,43,1392,37.3L1440,32L1440,120L1392,120C1344,120,1248,120,1152,120C1056,120,960,120,864,120C768,120,672,120,576,120C480,120,384,120,288,120C192,120,96,120,48,120L0,120Z" 
+              fill="rgba(255,255,255,0.05)"
+            />
+          </svg>
+        </motion.div>
+      )}
     </section>
   );
 }

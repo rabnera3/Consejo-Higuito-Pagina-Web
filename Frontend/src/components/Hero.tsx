@@ -3,27 +3,59 @@ import { Button } from './ui/button';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import logo from '../img/logo01.webp';
+import carrusel1 from '../img/svg/carrusel1.webp';
+import carrusel2 from '../img/svg/carrusel2.webp';
+import carrusel3 from '../img/svg/carrusel3.webp';
+import carrusel4 from '../img/svg/carrusel4.webp';
 
 export function Hero() {
   const ref = useRef(null);
+  const [isDesktop, setIsDesktop] = useState(true);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  useEffect(() => {
+    // Check if desktop on mount
+    const isDesktopView = window.innerWidth >= 768;
+    setIsDesktop(isDesktopView);
+    
+    // Check for prefers-reduced-motion
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mediaQuery.matches);
+    
+    const handleMediaChange = (e: MediaQueryListEvent) => {
+      setPrefersReducedMotion(e.matches);
+    };
+    
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 768);
+    };
+    
+    mediaQuery.addEventListener('change', handleMediaChange);
+    window.addEventListener('resize', handleResize);
+    
+    return () => {
+      mediaQuery.removeEventListener('change', handleMediaChange);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"]
   });
 
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  // Only apply parallax on desktop without reduced motion preference
+  const y = useTransform(scrollYProgress, [0, 1], isDesktop && !prefersReducedMotion ? ["0%", "30%"] : ["0%", "0%"]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5], !prefersReducedMotion ? [1, 0] : [1, 1]);
 
   // SVGs del carrusel de fondo (optimizados a WebP)
   const carouselSvgs = [
-    new URL('../img/svg/carrusel1.webp', import.meta.url).href,
-    new URL('../img/svg/carrusel2.webp', import.meta.url).href,
-    new URL('../img/svg/carrusel3.webp', import.meta.url).href,
-    new URL('../img/svg/carrusel4.webp', import.meta.url).href,
+    carrusel1,
+    carrusel2,
+    carrusel3,
+    carrusel4,
   ];
-
-  // Resolve logo asset
-  const logo = new URL('../img/logo01.webp', import.meta.url).href;
 
   // JS slideshow state
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -67,33 +99,35 @@ export function Hero() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-transparent via-black/10 to-black/40 z-10"></div>
       </motion.div>
 
-      {/* Animated decorative elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div
-          className="absolute top-20 right-10 w-32 h-32 bg-green-400/10 rounded-full blur-3xl"
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.3, 0.5, 0.3],
-          }}
-          transition={{
-            duration: 4,
-            repeat: Infinity,
-            ease: "linear"
-          }}
-        />
-        <motion.div
-          className="absolute bottom-20 left-20 w-40 h-40 bg-amber-400/10 rounded-full blur-3xl"
-          animate={{
-            scale: [1.2, 1, 1.2],
-            opacity: [0.3, 0.5, 0.3],
-          }}
-          transition={{
-            duration: 5,
-            repeat: Infinity,
-            ease: "linear"
-          }}
-        />
-      </div>
+      {/* Animated decorative elements - disabled on mobile for better performance */}
+      {isDesktop && (
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <motion.div
+            className="absolute top-20 right-10 w-32 h-32 bg-green-400/10 rounded-full blur-3xl"
+            animate={prefersReducedMotion ? {} : {
+              scale: [1, 1.2, 1],
+              opacity: [0.3, 0.5, 0.3],
+            }}
+            transition={{
+              duration: 4,
+              repeat: Infinity,
+              ease: "linear"
+            }}
+          />
+          <motion.div
+            className="absolute bottom-20 left-20 w-40 h-40 bg-amber-400/10 rounded-full blur-3xl"
+            animate={prefersReducedMotion ? {} : {
+              scale: [1.2, 1, 1.2],
+              opacity: [0.3, 0.5, 0.3],
+            }}
+            transition={{
+              duration: 5,
+              repeat: Infinity,
+              ease: "linear"
+            }}
+          />
+        </div>
+      )}
 
       {/* Content */}
       <motion.div
@@ -217,20 +251,22 @@ export function Hero() {
         </div>
       </motion.div>
 
-      {/* Scroll indicator */}
-      <motion.div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
-        animate={{ y: [0, 10, 0] }}
-        transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-      >
-        <div className="w-6 h-10 border-2 border-white/50 rounded-full flex items-start justify-center p-2">
-          <motion.div
-            className="w-1.5 h-1.5 bg-white rounded-full"
-            animate={{ y: [0, 12, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-          />
-        </div>
-      </motion.div>
+      {/* Scroll indicator - hidden on mobile for less clutter */}
+      {isDesktop && (
+        <motion.div
+          className="absolute bottom-8 left-1/2 -translate-x-1/2"
+          animate={prefersReducedMotion ? {} : { y: [0, 10, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <div className="w-6 h-10 border-2 border-white/50 rounded-full flex items-start justify-center p-2">
+            <motion.div
+              className="w-1.5 h-1.5 bg-white rounded-full"
+              animate={prefersReducedMotion ? {} : { y: [0, 12, 0] }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+            />
+          </div>
+        </motion.div>
+      )}
     </section>
   );
 }

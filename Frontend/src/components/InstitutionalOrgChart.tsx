@@ -1,7 +1,6 @@
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { Download, ExternalLink, Info } from 'lucide-react';
-
-const organigramaImage = new URL('../img/organigrama.webp', import.meta.url).href;
+import organigramaImage from '../img/organigrama.webp';
 
 export function InstitutionalOrgChart() {
   return (

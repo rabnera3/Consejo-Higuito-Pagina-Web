@@ -1,40 +1,9 @@
-import { motion } from 'motion/react';
 import { Calendar, User, FolderOpen, ArrowRight } from 'lucide-react';
+import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { blogApi, BlogPost, API_BASE } from '../lib/api';
-
-// Animation helpers
-const FadeIn = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
-    transition={{ duration: 0.6 }}
-    className={className}
-  >
-    {children}
-  </motion.div>
-);
-
-const Stagger = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
-  <motion.div
-    initial="hidden"
-    whileInView="visible"
-    viewport={{ once: true }}
-    variants={{
-      visible: { transition: { staggerChildren: 0.1 } },
-    }}
-    className={className}
-  >
-    {children}
-  </motion.div>
-);
-
-const itemVariant = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-};
+import { FadeIn, Stagger, itemVariant } from '../components/figma/animations';
 
 export default function BlogPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('Todos');

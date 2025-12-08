@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
+import logoImg from '../img/logo01.webp';
 
 interface NodeBoxProps {
   children: ReactNode;
@@ -55,7 +56,7 @@ function SideBox({ title, color = 'bg-emerald-50' }: { title: string; color?: st
   );
 }
 
-const logoSrc = new URL('../img/logo01.png', import.meta.url).href;
+const logoSrc = logoImg;
 
 const departmentColumns = [
   { title: 'Soporte', items: ['Asistente administrativo'] },

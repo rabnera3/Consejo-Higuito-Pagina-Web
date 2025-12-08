@@ -47,6 +47,15 @@ html {
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  
+  /* Brand Colors */
+  --brand-primary: #059669;
+  --brand-secondary: #0369a1;
+  --brand-accent: #dc2626;
+  --brand-warning: #d97706;
+  --brand-success: #059669;
+  --brand-purple: #9333ea;
+  --brand-teal: #0d9488;
 }
 
 .dark {
@@ -195,6 +204,78 @@ html {
       font-weight: var(--font-weight-normal);
       line-height: 1.5;
     }
+  }
+}
+
+html {
+  font-size: var(--font-size);
+}
+
+/* Reusable Component Utilities */
+@layer components {
+  .icon-button {
+    @apply p-2 rounded-full transition-colors;
+  }
+
+  .icon-button-primary {
+    @apply icon-button bg-white shadow-lg hover:bg-gray-100;
+  }
+
+  .section-header {
+    @apply text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6;
+  }
+
+  .section-subtitle {
+    @apply text-lg md:text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed;
+  }
+
+  .container-base {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .section-padding {
+    @apply py-16 md:py-20;
+  }
+
+  .header-padding {
+    @apply py-16 md:py-24;
+  }
+
+  .icon-badge {
+    @apply p-3 rounded-xl text-white shadow-lg;
+  }
+
+  .card-base {
+    @apply rounded-2xl overflow-hidden shadow-lg;
+  }
+
+  .button-dot {
+    @apply h-2.5 rounded-full transition-all duration-300;
+  }
+
+  .button-dot-active {
+    @apply button-dot bg-amber-600 w-8;
+  }
+
+  .button-dot-inactive {
+    @apply button-dot bg-gray-300 hover:bg-gray-400 w-2.5;
+  }
+
+  /* Form Input Utilities */
+  .input-base {
+    @apply w-full px-4 py-3 rounded-lg border border-gray-300 outline-none transition-colors;
+  }
+
+  .input-focus {
+    @apply focus:border-green-600 focus:ring-2 focus:ring-green-600/20;
+  }
+
+  .input-field {
+    @apply input-base input-focus;
+  }
+
+  .textarea-field {
+    @apply input-field resize-none;
   }
 }
 

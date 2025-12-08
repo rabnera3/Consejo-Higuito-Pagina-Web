@@ -1,21 +1,8 @@
-import { motion } from 'motion/react';
-import { Calendar, User, FolderOpen, ArrowLeft, Share2 } from 'lucide-react';
-import { Link, useParams, Navigate } from 'react-router-dom';
+import { Calendar, User, ArrowLeft, Share2, FolderOpen } from 'lucide-react';
+import { useParams, Link, Navigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { blogApi, BlogPost, API_BASE } from '../lib/api';
-
-// Animation helpers
-const FadeIn = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
-    transition={{ duration: 0.6 }}
-    className={className}
-  >
-    {children}
-  </motion.div>
-);
+import { FadeIn } from '../components/figma/animations';
 
 export default function BlogPostPage() {
   const { slug } = useParams<{ slug: string }>();

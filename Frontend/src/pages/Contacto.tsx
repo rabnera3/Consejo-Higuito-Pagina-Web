@@ -1,38 +1,7 @@
 import { Phone, Mail, MapPin, Download, Send } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useState } from 'react';
-
-// Animation helpers
-const FadeIn = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
-    transition={{ duration: 0.6 }}
-    className={className}
-  >
-    {children}
-  </motion.div>
-);
-
-const Stagger = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
-  <motion.div
-    initial="hidden"
-    whileInView="visible"
-    viewport={{ once: true }}
-    variants={{
-      visible: { transition: { staggerChildren: 0.1 } },
-    }}
-    className={className}
-  >
-    {children}
-  </motion.div>
-);
-
-const itemVariant = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-};
+import { FadeIn, Stagger, itemVariant } from '../components/figma/animations';
 
 const telefonos = [
   '+504 2662-6682',
@@ -160,7 +129,7 @@ export default function ContactoPage() {
                       required
                       value={formData.nombre}
                       onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-green-600 focus:ring-2 focus:ring-green-600/20 outline-none transition-colors"
+                      className="input-field"
                     />
                   </div>
                   
@@ -171,7 +140,7 @@ export default function ContactoPage() {
                       required
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-green-600 focus:ring-2 focus:ring-green-600/20 outline-none transition-colors"
+                      className="input-field"
                     />
                   </div>
                   
@@ -181,7 +150,7 @@ export default function ContactoPage() {
                       placeholder="Su número de teléfono"
                       value={formData.telefono}
                       onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-green-600 focus:ring-2 focus:ring-green-600/20 outline-none transition-colors"
+                      className="input-field"
                     />
                   </div>
                   
@@ -192,7 +161,7 @@ export default function ContactoPage() {
                       rows={5}
                       value={formData.mensaje}
                       onChange={(e) => setFormData({ ...formData, mensaje: e.target.value })}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-green-600 focus:ring-2 focus:ring-green-600/20 outline-none transition-colors resize-none"
+                      className="textarea-field"
                     />
                   </div>
                   
@@ -204,7 +173,7 @@ export default function ContactoPage() {
                       required
                       value={formData.captcha}
                       onChange={(e) => setFormData({ ...formData, captcha: e.target.value })}
-                      className="w-20 px-4 py-3 rounded-lg border border-gray-300 focus:border-green-600 focus:ring-2 focus:ring-green-600/20 outline-none transition-colors"
+                      className="input-field w-20"
                     />
                   </div>
                   

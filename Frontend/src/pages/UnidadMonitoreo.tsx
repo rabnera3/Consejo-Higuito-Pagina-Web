@@ -1,7 +1,8 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { BarChart3, Target, CheckCircle2, Image as ImageIcon, ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
-import useEmblaCarousel from 'embla-carousel-react';
+import { useMemo } from 'react';
+import { BarChart3, Target, CheckCircle2, Image as ImageIcon } from 'lucide-react';
 import { motion } from 'motion/react';
+import { FadeIn, Stagger, itemVariant } from '../components/figma/animations';
+import { ImageCarousel } from '../components/ImageCarousel';
 
 import mon1 from '../img/unidades/monitoreo/gallery_unidad-monitoreo_1-400x284_1.webp';
 import mon2 from '../img/unidades/monitoreo/gallery_unidad-monitoreo_2.webp';
@@ -10,38 +11,6 @@ import mon4 from '../img/unidades/monitoreo/gallery_unidad-monitoreo_4-400x284_1
 import mon5 from '../img/unidades/monitoreo/gallery_unidad-monitoreo_5-400x284_1.webp';
 import mon6 from '../img/unidades/monitoreo/gallery_unidad-monitoreo_6.webp';
 import mon7 from '../img/unidades/monitoreo/gallery_unidad-monitoreo_7-400x284_1.webp';
-
-// Animation helpers
-const FadeIn = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
-    transition={{ duration: 0.6 }}
-    className={className}
-  >
-    {children}
-  </motion.div>
-);
-
-const Stagger = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
-  <motion.div
-    initial="hidden"
-    whileInView="visible"
-    viewport={{ once: true }}
-    variants={{
-      visible: { transition: { staggerChildren: 0.1 } },
-    }}
-    className={className}
-  >
-    {children}
-  </motion.div>
-);
-
-const itemVariant = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-};
 
 const galeriaBase = [
   { src: mon1, alt: 'Proyecto monitoreo 1' },
@@ -71,10 +40,6 @@ const funciones = [
 ];
 
 export default function UnidadMonitoreoPage() {
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: 'start', containScroll: 'trimSnaps', slidesToScroll: 1, dragFree: false, skipSnaps: false });
-  const [isPaused, setIsPaused] = useState(false);
-  const autoPlayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const galeriaLocales = useMemo(() => {
     const shuffled = [...galeriaBase];
     for (let i = shuffled.length - 1; i > 0; i -= 1) {
@@ -83,34 +48,6 @@ export default function UnidadMonitoreoPage() {
     }
     return shuffled;
   }, []);
-
-  useEffect(() => {
-    if (!emblaApi) return;
-    const onSelect = () => setSelectedIndex(emblaApi.selectedScrollSnap());
-    emblaApi.on('select', onSelect);
-    onSelect();
-    return () => {
-      emblaApi.off('select', onSelect);
-    };
-  }, [emblaApi]);
-
-  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
-  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
-  const scrollTo = useCallback((index: number) => emblaApi?.scrollTo(index), [emblaApi]);
-
-  useEffect(() => {
-    if (!emblaApi) return;
-    const play = () => {
-      if (!isPaused) {
-        emblaApi.scrollNext();
-      }
-      autoPlayRef.current = setTimeout(play, 4800);
-    };
-    autoPlayRef.current = setTimeout(play, 4800);
-    return () => {
-      if (autoPlayRef.current) clearTimeout(autoPlayRef.current);
-    };
-  }, [emblaApi, isPaused]);
 
   return (
     <div className="min-h-screen bg-white">
@@ -242,90 +179,7 @@ export default function UnidadMonitoreoPage() {
           </FadeIn>
 
           <motion.div variants={itemVariant}>
-            {/* Carousel Container */}
-            <div className="max-w-none w-full px-4 sm:px-6 md:px-8">
-              <div className="relative">
-                {/* Embla Carousel */}
-                <div className="overflow-hidden rounded-2xl" ref={emblaRef}>
-                  <div className="flex gap-2 sm:gap-3 md:gap-4">
-                    {galeriaLocales.map((image, index) => (
-                      <div
-                        key={index}
-                        className="flex-[0_0_100%] sm:flex-[0_0_calc(50%-6px)] md:flex-[0_0_calc(50%-8px)]"
-                      >
-                        <div className="relative aspect-video rounded-lg overflow-hidden shadow-lg group bg-gray-100">
-                          <img
-                            src={image.src}
-                            alt={image.alt}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Navigation Buttons */}
-                <button
-                  onClick={scrollPrev}
-                  aria-label="Diapositiva anterior"
-                  className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 sm:-translate-x-6 z-10 p-2 rounded-full bg-white shadow-lg hover:bg-gray-100 transition-colors"
-                >
-                  <ChevronLeft className="w-6 h-6 text-gray-900" />
-                </button>
-
-                <button
-                  onClick={scrollNext}
-                  aria-label="Siguiente diapositiva"
-                  className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 sm:translate-x-6 z-10 p-2 rounded-full bg-white shadow-lg hover:bg-gray-100 transition-colors"
-                >
-                  <ChevronRight className="w-6 h-6 text-gray-900" />
-                </button>
-              </div>
-
-              {/* Controls Below Carousel */}
-              <div className="flex items-center justify-between mt-6">
-                {/* Play/Pause Button */}
-                <button
-                  onClick={() => setIsPaused(!isPaused)}
-                  aria-label={isPaused ? 'Reproducir' : 'Pausar'}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors text-gray-900 font-medium"
-                >
-                  {isPaused ? (
-                    <>
-                      <Play className="w-5 h-5" />
-                      <span>Reproducir</span>
-                    </>
-                  ) : (
-                    <>
-                      <Pause className="w-5 h-5" />
-                      <span>Pausar</span>
-                    </>
-                  )}
-                </button>
-
-                {/* Dot Indicators */}
-                <div className="flex gap-2 justify-center flex-1 mx-4">
-                  {galeriaLocales.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => scrollTo(index)}
-                      aria-label={`Ir a diapositiva ${index + 1}`}
-                      className={`h-2.5 rounded-full transition-all duration-300 ${
-                        index === selectedIndex
-                          ? 'bg-orange-600 w-8'
-                          : 'bg-gray-300 hover:bg-gray-400 w-2.5'
-                      }`}
-                    />
-                  ))}
-                </div>
-
-                {/* Image Counter */}
-                <div className="text-sm font-medium text-gray-600">
-                  {selectedIndex + 1} / {galeriaLocales.length}
-                </div>
-              </div>
-            </div>
+            <ImageCarousel images={galeriaLocales} />
           </motion.div>
         </div>
 
