@@ -3,6 +3,7 @@ import { Button } from './ui/button';
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Link, useLocation } from 'react-router-dom';
+import { ResponsiveImage } from './ResponsiveImage';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -95,11 +96,11 @@ export function Navbar() {
           <div className="flex items-center justify-between">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-3 group" aria-label="Ir al inicio">
-              <img
+              <ResponsiveImage
                 src={logo}
                 alt="Consejo Intermunicipal Higuito"
+                sizes="(max-width: 768px) 40px, 48px"
                 className="h-10 w-auto md:h-12 drop-shadow-sm select-none pointer-events-none"
-                draggable={false}
               />
               <span className={`hidden xl:inline font-medium transition-colors ${scrolled ? 'text-green-700 group-hover:text-green-800' : 'text-white group-hover:text-green-100 drop-shadow-md'}`}>
                 Consejo Intermunicipal Higuito

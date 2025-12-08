@@ -3,6 +3,7 @@ import { Button } from './ui/button';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { ResponsiveImage } from './ResponsiveImage';
 import logo from '../img/logo01.webp';
 import carrusel1 from '../img/svg/carrusel1.webp';
 import carrusel2 from '../img/svg/carrusel2.webp';
@@ -83,13 +84,12 @@ export function Hero() {
             className={`absolute inset-0 transition-opacity duration-1000 ${currentSlide === i ? 'opacity-100' : 'opacity-0'
               }`}
           >
-            <img
+            <ResponsiveImage
               src={src}
               alt=""
+              sizes="100vw"
               className="w-full h-full object-cover"
-              draggable={false}
               loading={i === 0 ? 'eager' : 'lazy'}
-              decoding="async"
             />
           </div>
         ))}
@@ -152,12 +152,12 @@ export function Hero() {
               whileHover={{ scale: 1.05, y: -5 }}
               className="mb-4 lg:mb-0 hidden md:block"
             >
-              <img
+              <ResponsiveImage
                 src={logo}
                 alt="Logo Consejo Higuito"
+                sizes="(max-width: 768px) 96px, (max-width: 1024px) 128px, 160px"
                 className="h-24 w-auto md:h-32 lg:h-40 drop-shadow-2xl"
                 loading="lazy"
-                decoding="async"
               />
             </motion.div>
 
