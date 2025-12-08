@@ -1,6 +1,6 @@
 import { MapPin } from 'lucide-react';
 import { motion } from 'motion/react';
-import { ImageWithFallback } from '../components/figma/ImageWithFallback';
+import { ResponsiveImage } from '../components/ResponsiveImage';
 import { FadeIn, Stagger, itemVariant } from '../components/figma/animations';
 
 const municipios = [
@@ -143,9 +143,10 @@ export default function SociosPage() {
                   className={`${isEven ? 'order-1 md:order-1' : 'order-1 md:order-2'
                     } rounded-2xl overflow-hidden shadow-lg`}
                 >
-                  <ImageWithFallback
+                  <ResponsiveImage
                     src={municipio.imagen}
                     alt={`${municipio.nombre} - Municipio socio del CIH`}
+                    sizes="(max-width: 640px) 480px, (max-width: 1024px) 768px, 600px"
                     className="w-full h-[280px] md:h-[320px] object-cover"
                   />
                 </div>

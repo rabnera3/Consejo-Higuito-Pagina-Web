@@ -1,5 +1,5 @@
 import { FadeIn, Stagger, itemVariant } from '../components/figma/animations';
-import { ImageWithFallback } from '../components/figma/ImageWithFallback';
+import { ResponsiveImage } from '../components/ResponsiveImage';
 import { motion } from 'motion/react';
 import { Target, Eye, Share2, Users, Building2, ChevronRight } from 'lucide-react';
 import { HiguitoOrgChart } from '../components/HiguitoOrgChart';
@@ -142,9 +142,10 @@ export default function FilosofiaPage() {
               className="flex flex-col rounded-3xl border border-gray-100 bg-white shadow-lg ring-1 ring-black/5"
             >
               <div className="relative aspect-[4/3] overflow-hidden rounded-t-3xl bg-gray-50">
-                <ImageWithFallback
+                <ResponsiveImage
                   src={presidente}
                   alt="Ing. Kelvin G. Aguilar – Presidente de la Junta Directiva"
+                  sizes="(max-width: 640px) 480px, 600px"
                   className="h-full w-full object-cover"
                 />
                 <div className="absolute bottom-4 right-4 rounded-full bg-white/90 px-4 py-2 text-xs font-semibold text-gray-700 shadow">
@@ -168,7 +169,7 @@ export default function FilosofiaPage() {
               className="order-2 lg:order-1 flex flex-col rounded-3xl border border-gray-100 bg-white shadow-lg"
             >
               <div className="relative aspect-[4/3] overflow-hidden rounded-t-3xl bg-gray-100">
-                <ImageWithFallback src={gerente} alt="Lic. Lourdes Marisela Espinoza – Gerente General CIH" className="h-full w-full object-cover" />
+                <ResponsiveImage src={gerente} alt="Lic. Lourdes Marisela Espinoza – Gerente General CIH" sizes="(max-width: 640px) 480px, 600px" className="h-full w-full object-cover" />
                 <div className="absolute inset-x-6 bottom-6 rounded-2xl bg-white/90 px-4 py-3 text-sm text-gray-700 shadow">
                   <p className="font-semibold text-gray-900">Lic. Lourdes Marisela Espinoza</p>
                   <p className="text-xs uppercase tracking-wide text-emerald-600">Gerente General CIH</p>
