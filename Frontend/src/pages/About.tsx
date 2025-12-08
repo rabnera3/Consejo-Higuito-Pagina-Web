@@ -1,5 +1,5 @@
 import { FadeIn, Stagger, itemVariant } from '../components/figma/animations';
-import { ImageWithFallback } from '../components/figma/ImageWithFallback';
+import { ResponsiveImage } from '../components/ResponsiveImage';
 import { motion } from 'motion/react';
 import { CircleHelp, Sprout, Recycle, UsersRound } from 'lucide-react';
 
@@ -44,9 +44,10 @@ export default function AboutPage() {
               </p>
             </motion.div>
             <motion.div variants={itemVariant} className="rounded-2xl overflow-hidden shadow-2xl h-[400px]">
-              <ImageWithFallback
+              <ResponsiveImage
                 src={new URL('../img/aboutus1.webp', import.meta.url).href}
                 alt="Reunión comunitaria"
+                sizes="(max-width: 640px) 480px, (max-width: 1024px) 768px, 1200px"
                 className="w-full h-full object-cover"
               />
             </motion.div>
@@ -56,9 +57,10 @@ export default function AboutPage() {
           <span id="proceso" />
           <Stagger className="grid md:grid-cols-2 gap-12 items-center">
             <motion.div variants={itemVariant} className="order-2 md:order-1 rounded-2xl overflow-hidden shadow-2xl h-[400px]">
-              <ImageWithFallback
+              <ResponsiveImage
                 src={new URL('../img/aboutus2.webp', import.meta.url).href}
                 alt="Ecosistemas y sostenibilidad"
+                sizes="(max-width: 640px) 480px, (max-width: 1024px) 768px, 1200px"
                 className="w-full h-full object-cover"
               />
             </motion.div>
@@ -113,9 +115,10 @@ export default function AboutPage() {
                   </p>
                 </div>
                 <div className="rounded-2xl overflow-hidden shadow-xl">
-                  <ImageWithFallback
+                  <ResponsiveImage
                     src={new URL('../img/aboutus3.webp', import.meta.url).href}
                     alt="Trabajo de campo colaborativo"
+                    sizes="(max-width: 640px) 480px, (max-width: 1024px) 500px, 600px"
                     className="w-full aspect-[4/3] object-cover"
                   />
                 </div>
@@ -155,10 +158,11 @@ export default function AboutPage() {
           <Stagger className="grid md:grid-cols-2 gap-12 items-center">
             <motion.div variants={itemVariant} className="order-2 md:order-1">
               <div className="relative rounded-3xl overflow-hidden shadow-2xl">
-                <ImageWithFallback
+                <ResponsiveImage
                   src={new URL('../img/mapa1.webp', import.meta.url).href}
                   alt="Alcance territorial"
-                  className="w-full h-[420px]"
+                  sizes="(max-width: 640px) 480px, (max-width: 1024px) 768px, 1280px"
+                  className="w-full h-[420px] object-cover"
                 />
                 <div className="absolute bottom-6 left-6 right-6 bg-white/90 backdrop-blur-sm rounded-2xl p-4 grid grid-cols-2 gap-4 text-sm text-gray-700">
                   <div>
@@ -207,9 +211,10 @@ export default function AboutPage() {
                 </div>
               </motion.div>
               <motion.div variants={itemVariant} className="h-[400px] md:h-full">
-                <ImageWithFallback
+                <ResponsiveImage
                   src={new URL('../img/aboutus4.webp', import.meta.url).href}
                   alt="Agradecimientos y cooperación"
+                  sizes="(max-width: 640px) 480px, (max-width: 1024px) 500px, 600px"
                   className="w-full h-full object-cover"
                 />
               </motion.div>
