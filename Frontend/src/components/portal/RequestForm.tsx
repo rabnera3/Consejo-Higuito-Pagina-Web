@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { createRequest } from '../../lib/api';
+import { createRequest, RequestEntry } from '../../lib/api';
 
 interface RequestFormProps {
     onSuccess: () => void;
@@ -7,7 +7,7 @@ interface RequestFormProps {
 }
 
 export function RequestForm({ onSuccess, onCancel }: RequestFormProps) {
-    const [type, setType] = useState('vacaciones');
+    const [type, setType] = useState<RequestEntry['type']>('vacaciones');
     const [description, setDescription] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -44,11 +44,12 @@ export function RequestForm({ onSuccess, onCancel }: RequestFormProps) {
                         <select
                             className="form-control"
                             value={type}
-                            onChange={(e) => setType(e.target.value)}
+                            onChange={(e) => setType(e.target.value as RequestEntry['type'])}
                         >
                             <option value="vacaciones">Vacaciones</option>
                             <option value="permiso">Permiso</option>
                             <option value="insumos">Insumos</option>
+                            <option value="vehiculo">Vehículo</option>
                             <option value="otro">Otro</option>
                         </select>
                     </div>

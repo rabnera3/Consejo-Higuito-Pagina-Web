@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { fetchNotifications, Notification, markNotificationAsRead } from '../../lib/api';
-import { Link } from 'react-router-dom';
 
 export function NotificationsCard() {
     const [notifications, setNotifications] = useState<Notification[]>([]);

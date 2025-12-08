@@ -66,7 +66,7 @@ export default function NewRequestPage() {
             if (response.success) {
                 navigate('/portal/solicitudes');
             } else {
-                setError(response.message || 'Error al crear la solicitud');
+                setError('Error al crear la solicitud');
             }
         } catch (err: any) {
             setError(err.message || 'Error al crear la solicitud');

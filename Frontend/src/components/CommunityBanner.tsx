@@ -6,7 +6,7 @@ export function CommunityBanner() {
   <section className="relative h-[400px] overflow-hidden">
       {/* Background Image */}
       <ImageWithFallback
-        src={new URL('../img/landingpage1.jpg', import.meta.url).href}
+        src={new URL('../img/landingpage1.webp', import.meta.url).href}
         alt="Agricultural workers in the field"
         className="absolute inset-0 w-full h-full object-cover object-top"
       />

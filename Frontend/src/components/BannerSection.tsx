@@ -14,7 +14,11 @@ export function BannerSection() {
   const scale = useTransform(scrollYProgress, [0, 0.5, 1], [1, 1.02, 1]);
 
   return (
-    <section ref={sectionRef} className="py-32 bg-gradient-to-br from-green-600 via-green-700 to-emerald-900 relative overflow-hidden">
+    <section
+      ref={sectionRef}
+      className="py-32 bg-gradient-to-br from-green-600 via-green-700 to-emerald-900 relative overflow-hidden"
+      style={{ position: 'relative' }}
+    >
       {/* Optimized animated background - reduced blur and animations */}
       <div className="absolute inset-0 opacity-30 will-change-transform">
         <motion.div 

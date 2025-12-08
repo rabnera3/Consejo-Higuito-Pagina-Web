@@ -1,5 +1,15 @@
-import { Wheat, Target, CheckCircle2, Image as ImageIcon } from 'lucide-react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Target, CheckCircle2, Image as ImageIcon, ChevronLeft, ChevronRight, Pause, Play, Wheat } from 'lucide-react';
+import useEmblaCarousel from 'embla-carousel-react';
 import { motion } from 'motion/react';
+
+import san1 from '../img/unidades/san/gallery_unidad-san_1.webp';
+import san11 from '../img/unidades/san/gallery_unidad-san_11_1.webp';
+import san12 from '../img/unidades/san/gallery_unidad-san_12_1.webp';
+import san14 from '../img/unidades/san/gallery_unidad-san_14_1.webp';
+import san15 from '../img/unidades/san/gallery_unidad-san_15_1.webp';
+import san17 from '../img/unidades/san/gallery_unidad-san_17_1.webp';
+import san19 from '../img/unidades/san/gallery_unidad-san_19.webp';
 
 // Animation helpers
 const FadeIn = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
@@ -53,7 +63,58 @@ const lineamientos = [
   'Monitoreo y seguimiento de acciones SAN',
 ];
 
+const galeriaBase = [
+  { src: san1, alt: 'Proyecto SAN 1' },
+  { src: san11, alt: 'Proyecto SAN 11' },
+  { src: san12, alt: 'Proyecto SAN 12' },
+  { src: san14, alt: 'Proyecto SAN 14' },
+  { src: san15, alt: 'Proyecto SAN 15' },
+  { src: san17, alt: 'Proyecto SAN 17' },
+  { src: san19, alt: 'Proyecto SAN 19' },
+];
+
 export default function UnidadSANPage() {
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: 'start', containScroll: 'trimSnaps', slidesToScroll: 1, dragFree: false, skipSnaps: false });
+  const [isPaused, setIsPaused] = useState(false);
+  const autoPlayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const galeriaLocales = useMemo(() => {
+    const shuffled = [...galeriaBase];
+    for (let i = shuffled.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  }, []);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    const onSelect = () => setSelectedIndex(emblaApi.selectedScrollSnap());
+    emblaApi.on('select', onSelect);
+    onSelect();
+    return () => {
+      emblaApi.off('select', onSelect);
+    };
+  }, [emblaApi]);
+
+  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
+  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
+  const scrollTo = useCallback((index: number) => emblaApi?.scrollTo(index), [emblaApi]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    const play = () => {
+      if (!isPaused) {
+        emblaApi.scrollNext();
+      }
+      autoPlayRef.current = setTimeout(play, 4800);
+    };
+    autoPlayRef.current = setTimeout(play, 4800);
+    return () => {
+      if (autoPlayRef.current) clearTimeout(autoPlayRef.current);
+    };
+  }, [emblaApi, isPaused]);
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header con gradiente y blobs */}
@@ -81,7 +142,7 @@ export default function UnidadSANPage() {
         <Stagger className="grid md:grid-cols-2 gap-8">
           <motion.div variants={itemVariant} className="rounded-2xl overflow-hidden shadow-lg">
             <img
-              src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=800&h=600&fit=crop"
+              src={san14}
               alt="Huerto familiar en Rio Colorado"
               className="w-full h-[300px] object-cover"
             />
@@ -94,7 +155,7 @@ export default function UnidadSANPage() {
 
           <motion.div variants={itemVariant} className="rounded-2xl overflow-hidden shadow-lg">
             <img
-              src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&h=600&fit=crop"
+              src={san17}
               alt="Sistema de riego"
               className="w-full h-[300px] object-cover"
             />
@@ -461,34 +522,103 @@ export default function UnidadSANPage() {
           </Stagger>
         </div>
 
-        {/* Galería de imágenes */}
+        {/* Galería de imágenes con Carousel */}
         <div>
           <FadeIn>
             <div className="flex items-center gap-4 mb-10">
-              <div className="p-4 rounded-xl bg-amber-600 text-white shadow-lg">
+              <div className="p-4 rounded-xl bg-red-600 text-white shadow-lg">
                 <ImageIcon className="w-8 h-8" />
               </div>
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Galería de imágenes</h2>
             </div>
           </FadeIn>
 
-          <Stagger className="grid md:grid-cols-2 gap-8">
-            <motion.div variants={itemVariant} className="rounded-2xl overflow-hidden shadow-lg group">
-              <img
-                src="https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=800&h=600&fit=crop"
-                alt="Seguridad alimentaria 1"
-                className="w-full h-[280px] object-cover group-hover:scale-105 transition-transform duration-300"
-              />
-            </motion.div>
+          <motion.div variants={itemVariant}>
+            {/* Carousel Container */}
+            <div className="max-w-none w-full px-4 sm:px-6 md:px-8">
+              <div className="relative">
+                {/* Embla Carousel */}
+                <div className="overflow-hidden rounded-2xl" ref={emblaRef}>
+                  <div className="flex gap-2 sm:gap-3 md:gap-4">
+                    {galeriaLocales.map((image, index) => (
+                      <div
+                        key={index}
+                        className="flex-[0_0_100%] sm:flex-[0_0_calc(50%-6px)] md:flex-[0_0_calc(50%-8px)]"
+                      >
+                        <div className="relative aspect-video rounded-lg overflow-hidden shadow-lg group bg-gray-100">
+                          <img
+                            src={image.src}
+                            alt={image.alt}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
 
-            <motion.div variants={itemVariant} className="rounded-2xl overflow-hidden shadow-lg group">
-              <img
-                src="https://images.unsplash.com/photo-1595855759920-86582396756a?w=800&h=600&fit=crop"
-                alt="Seguridad alimentaria 2"
-                className="w-full h-[280px] object-cover group-hover:scale-105 transition-transform duration-300"
-              />
-            </motion.div>
-          </Stagger>
+                {/* Navigation Buttons */}
+                <button
+                  onClick={scrollPrev}
+                  aria-label="Diapositiva anterior"
+                  className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 sm:-translate-x-6 z-10 p-2 rounded-full bg-white shadow-lg hover:bg-gray-100 transition-colors"
+                >
+                  <ChevronLeft className="w-6 h-6 text-gray-900" />
+                </button>
+
+                <button
+                  onClick={scrollNext}
+                  aria-label="Siguiente diapositiva"
+                  className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 sm:translate-x-6 z-10 p-2 rounded-full bg-white shadow-lg hover:bg-gray-100 transition-colors"
+                >
+                  <ChevronRight className="w-6 h-6 text-gray-900" />
+                </button>
+              </div>
+
+              {/* Controls Below Carousel */}
+              <div className="flex items-center justify-between mt-6">
+                {/* Play/Pause Button */}
+                <button
+                  onClick={() => setIsPaused(!isPaused)}
+                  aria-label={isPaused ? 'Reproducir' : 'Pausar'}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors text-gray-900 font-medium"
+                >
+                  {isPaused ? (
+                    <>
+                      <Play className="w-5 h-5" />
+                      <span>Reproducir</span>
+                    </>
+                  ) : (
+                    <>
+                      <Pause className="w-5 h-5" />
+                      <span>Pausar</span>
+                    </>
+                  )}
+                </button>
+
+                {/* Dot Indicators */}
+                <div className="flex gap-2 justify-center flex-1 mx-4">
+                  {galeriaLocales.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => scrollTo(index)}
+                      aria-label={`Ir a diapositiva ${index + 1}`}
+                      className={`h-2.5 rounded-full transition-all duration-300 ${
+                        index === selectedIndex
+                          ? 'bg-red-600 w-8'
+                          : 'bg-gray-300 hover:bg-gray-400 w-2.5'
+                      }`}
+                    />
+                  ))}
+                </div>
+
+                {/* Image Counter */}
+                <div className="text-sm font-medium text-gray-600">
+                  {selectedIndex + 1} / {galeriaLocales.length}
+                </div>
+              </div>
+            </div>
+          </motion.div>
         </div>
 
       </div>

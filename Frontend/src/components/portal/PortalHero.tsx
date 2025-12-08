@@ -5,7 +5,7 @@ type PortalHeroProps = {
   showLogo?: boolean;
 };
 
-const logo = new URL('../../img/logo01.png', import.meta.url).href;
+const logo = new URL('../../img/logo01.webp', import.meta.url).href;
 
 export function PortalHero({
   title = 'Consejo Intermunicipal Higuito',

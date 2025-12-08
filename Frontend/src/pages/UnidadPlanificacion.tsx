@@ -1,5 +1,15 @@
-import { Target, CheckCircle2, Image as ImageIcon } from 'lucide-react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Target, CheckCircle2, Image as ImageIcon, ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
+import useEmblaCarousel from 'embla-carousel-react';
 import { motion } from 'motion/react';
+
+import plan04 from '../img/unidades/planificacion/uni_plan_terr_04_1.webp';
+import plan07 from '../img/unidades/planificacion/uni_plan_terr_07_1.webp';
+import plan08 from '../img/unidades/planificacion/uni_plan_terr_08_1.webp';
+import plan13 from '../img/unidades/planificacion/uni_plan_terr_13.webp';
+import plan14 from '../img/unidades/planificacion/uni_plan_terr_14_1.webp';
+import plan15 from '../img/unidades/planificacion/uni_plan_terr_15_1.webp';
+import plan16 from '../img/unidades/planificacion/uni_plan_terr_16.webp';
 
 // Animation helpers
 const FadeIn = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
@@ -33,6 +43,16 @@ const itemVariant = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 
+const galeriaBase = [
+  { src: plan04, alt: 'Proyecto planificacion 04' },
+  { src: plan07, alt: 'Proyecto planificacion 07' },
+  { src: plan08, alt: 'Proyecto planificacion 08' },
+  { src: plan13, alt: 'Proyecto planificacion 13' },
+  { src: plan14, alt: 'Proyecto planificacion 14' },
+  { src: plan15, alt: 'Proyecto planificacion 15' },
+  { src: plan16, alt: 'Proyecto planificacion 16' },
+];
+
 const responsabilidades = [
   'Brindar asistencia técnica y capacitación a los municipios y comunidades en procesos de planificación participativa a nivel municipal, con metodología Focal o las que la reemplacen o complementen en el futuro.',
   'Coordinar el proceso de formulación del Plan Estratégico institucional (PEI) de la CIH y consolidarlo, cada dos años, asegurando el cumplimiento de su cronograma y velando por su alineamiento a las necesidades que reflejan los Planes de Desarrollo Municipal (PDM), Planes de Inversión Municipal Plurianual (PIMP) y Anual (PIMA).',
@@ -48,6 +68,47 @@ const responsabilidades = [
 ];
 
 export default function UnidadPlanificacionPage() {
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: 'start', containScroll: 'trimSnaps', slidesToScroll: 1, dragFree: false, skipSnaps: false });
+  const [isPaused, setIsPaused] = useState(false);
+  const autoPlayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const galeriaLocales = useMemo(() => {
+    const shuffled = [...galeriaBase];
+    for (let i = shuffled.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  }, []);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    const onSelect = () => setSelectedIndex(emblaApi.selectedScrollSnap());
+    emblaApi.on('select', onSelect);
+    onSelect();
+    return () => {
+      emblaApi.off('select', onSelect);
+    };
+  }, [emblaApi]);
+
+  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
+  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
+  const scrollTo = useCallback((index: number) => emblaApi?.scrollTo(index), [emblaApi]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    const play = () => {
+      if (!isPaused) {
+        emblaApi.scrollNext();
+      }
+      autoPlayRef.current = setTimeout(play, 4800);
+    };
+    autoPlayRef.current = setTimeout(play, 4800);
+    return () => {
+      if (autoPlayRef.current) clearTimeout(autoPlayRef.current);
+    };
+  }, [emblaApi, isPaused]);
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header con gradiente y blobs */}
@@ -75,26 +136,30 @@ export default function UnidadPlanificacionPage() {
         <Stagger className="grid md:grid-cols-2 gap-8">
           <motion.div variants={itemVariant} className="rounded-2xl overflow-hidden shadow-lg">
             <img
-              src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&h=600&fit=crop"
-              alt="Asesoría en Concepción"
+              src={plan04}
+              alt="Asesoria en planificacion territorial"
               className="w-full h-[300px] object-cover"
+              loading="eager"
+              decoding="async"
             />
             <div className="bg-white p-4 border-t border-gray-200">
               <p className="text-gray-700 text-sm leading-relaxed">
-                <span className="font-semibold">Asesor de Fortalecimiento Institucional de SEAN-FAO</span> brinda inducción a municipio de Concepción, Copán para la vinculación de los PDM y su inversión con la Seguridad Alimentaria y Nutricional.
+                <span className="font-semibold">Planificacion territorial</span> para el desarrollo integral de municipios.
               </p>
             </div>
           </motion.div>
 
           <motion.div variants={itemVariant} className="rounded-2xl overflow-hidden shadow-lg">
             <img
-              src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&h=600&fit=crop"
-              alt="Graduación CUROC"
+              src={plan07}
+              alt="Capacitacion en planificacion municipal"
               className="w-full h-[300px] object-cover"
+              loading="lazy"
+              decoding="async"
             />
             <div className="bg-white p-4 border-t border-gray-200">
               <p className="text-gray-700 text-sm leading-relaxed">
-                <span className="font-semibold">Alumnos de CUROC reciben su diploma</span> de participación en inducción en metodología de Fortalecimiento de Capacidades Locales (FOCAL) impartido por el Consejo Higuito.
+                <span className="font-semibold">Capacitacion municipal</span> en metodologia de planificacion estrategica.
               </p>
             </div>
           </motion.div>
@@ -144,34 +209,103 @@ export default function UnidadPlanificacionPage() {
           </Stagger>
         </div>
 
-        {/* Galería de imágenes */}
+        {/* Galería de imágenes con Carousel */}
         <div>
           <FadeIn>
             <div className="flex items-center gap-4 mb-10">
-              <div className="p-4 rounded-xl bg-amber-600 text-white shadow-lg">
+              <div className="p-4 rounded-xl bg-cyan-600 text-white shadow-lg">
                 <ImageIcon className="w-8 h-8" />
               </div>
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Galería de imágenes</h2>
             </div>
           </FadeIn>
 
-          <Stagger className="grid md:grid-cols-2 gap-8">
-            <motion.div variants={itemVariant} className="rounded-2xl overflow-hidden shadow-lg group">
-              <img
-                src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&h=600&fit=crop"
-                alt="Planificación estratégica 1"
-                className="w-full h-[280px] object-cover group-hover:scale-105 transition-transform duration-300"
-              />
-            </motion.div>
+          <motion.div variants={itemVariant}>
+            {/* Carousel Container */}
+            <div className="max-w-none w-full px-4 sm:px-6 md:px-8">
+              <div className="relative">
+                {/* Embla Carousel */}
+                <div className="overflow-hidden rounded-2xl" ref={emblaRef}>
+                  <div className="flex gap-2 sm:gap-3 md:gap-4">
+                    {galeriaLocales.map((image, index) => (
+                      <div
+                        key={index}
+                        className="flex-[0_0_100%] sm:flex-[0_0_calc(50%-6px)] md:flex-[0_0_calc(50%-8px)]"
+                      >
+                        <div className="relative aspect-video rounded-lg overflow-hidden shadow-lg group bg-gray-100">
+                          <img
+                            src={image.src}
+                            alt={image.alt}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
 
-            <motion.div variants={itemVariant} className="rounded-2xl overflow-hidden shadow-lg group">
-              <img
-                src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&h=600&fit=crop"
-                alt="Planificación estratégica 2"
-                className="w-full h-[280px] object-cover group-hover:scale-105 transition-transform duration-300"
-              />
-            </motion.div>
-          </Stagger>
+                {/* Navigation Buttons */}
+                <button
+                  onClick={scrollPrev}
+                  aria-label="Diapositiva anterior"
+                  className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 sm:-translate-x-6 z-10 p-2 rounded-full bg-white shadow-lg hover:bg-gray-100 transition-colors"
+                >
+                  <ChevronLeft className="w-6 h-6 text-gray-900" />
+                </button>
+
+                <button
+                  onClick={scrollNext}
+                  aria-label="Siguiente diapositiva"
+                  className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 sm:translate-x-6 z-10 p-2 rounded-full bg-white shadow-lg hover:bg-gray-100 transition-colors"
+                >
+                  <ChevronRight className="w-6 h-6 text-gray-900" />
+                </button>
+              </div>
+
+              {/* Controls Below Carousel */}
+              <div className="flex items-center justify-between mt-6">
+                {/* Play/Pause Button */}
+                <button
+                  onClick={() => setIsPaused(!isPaused)}
+                  aria-label={isPaused ? 'Reproducir' : 'Pausar'}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors text-gray-900 font-medium"
+                >
+                  {isPaused ? (
+                    <>
+                      <Play className="w-5 h-5" />
+                      <span>Reproducir</span>
+                    </>
+                  ) : (
+                    <>
+                      <Pause className="w-5 h-5" />
+                      <span>Pausar</span>
+                    </>
+                  )}
+                </button>
+
+                {/* Dot Indicators */}
+                <div className="flex gap-2 justify-center flex-1 mx-4">
+                  {galeriaLocales.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => scrollTo(index)}
+                      aria-label={`Ir a diapositiva ${index + 1}`}
+                      className={`h-2.5 rounded-full transition-all duration-300 ${
+                        index === selectedIndex
+                          ? 'bg-cyan-600 w-8'
+                          : 'bg-gray-300 hover:bg-gray-400 w-2.5'
+                      }`}
+                    />
+                  ))}
+                </div>
+
+                {/* Image Counter */}
+                <div className="text-sm font-medium text-gray-600">
+                  {selectedIndex + 1} / {galeriaLocales.length}
+                </div>
+              </div>
+            </div>
+          </motion.div>
         </div>
 
       </div>

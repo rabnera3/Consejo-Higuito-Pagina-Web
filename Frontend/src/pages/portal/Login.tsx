@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import '../../styles/portal.css';
 
-const logo = new URL('../../img/logo01.png', import.meta.url).href;
+const logo = new URL('../../img/logo01.webp', import.meta.url).href;
 
 export default function PortalLoginPage() {
   const [error, setError] = useState('');

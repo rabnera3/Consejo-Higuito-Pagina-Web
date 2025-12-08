@@ -36,7 +36,7 @@ const generalLinks = [
 ];
 
 // Resolve logo asset from src/img without needing a PNG module declaration
-const logo = new URL('../img/logo01.png', import.meta.url).href;
+const logo = new URL('../img/logo01.webp', import.meta.url).href;
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false)
