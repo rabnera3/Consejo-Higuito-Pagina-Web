@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
+import { ResponsiveImage } from './ResponsiveImage';
 
 export interface CarouselImage {
   src: string;
@@ -70,9 +71,10 @@ export function ImageCarousel({
                 className="flex-[0_0_100%] sm:flex-[0_0_calc(50%-6px)] md:flex-[0_0_calc(50%-8px)]"
               >
                 <div className="relative aspect-video rounded-lg overflow-hidden shadow-lg group bg-gray-100">
-                  <img
+                  <ResponsiveImage
                     src={image.src}
                     alt={image.alt}
+                    sizes="(max-width: 640px) 100vw, 50vw"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 </div>
