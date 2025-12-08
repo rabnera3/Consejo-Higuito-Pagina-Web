@@ -4,13 +4,13 @@ import { motion } from 'motion/react';
 import { FadeIn, Stagger, itemVariant } from '../components/figma/animations';
 import { ImageCarousel } from '../components/ImageCarousel';
 
-import plan04 from '../img/unidades/planificacion/uni_plan_terr_04_1.avif';
-import plan07 from '../img/unidades/planificacion/uni_plan_terr_07_1.avif';
-import plan08 from '../img/unidades/planificacion/uni_plan_terr_08_1.avif';
-import plan13 from '../img/unidades/planificacion/uni_plan_terr_13.avif';
-import plan14 from '../img/unidades/planificacion/uni_plan_terr_14_1.avif';
-import plan15 from '../img/unidades/planificacion/uni_plan_terr_15_1.avif';
-import plan16 from '../img/unidades/planificacion/uni_plan_terr_16.avif';
+import plan04 from '../img/unidades/planificacion/uni_plan_terr_04_1.webp';
+import plan07 from '../img/unidades/planificacion/uni_plan_terr_07_1.webp';
+import plan08 from '../img/unidades/planificacion/uni_plan_terr_08_1.webp';
+import plan13 from '../img/unidades/planificacion/uni_plan_terr_13.webp';
+import plan14 from '../img/unidades/planificacion/uni_plan_terr_14_1.webp';
+import plan15 from '../img/unidades/planificacion/uni_plan_terr_15_1.webp';
+import plan16 from '../img/unidades/planificacion/uni_plan_terr_16.webp';
 
 const galeriaBase = [
   { src: plan04, alt: 'Proyecto planificacion 04' },

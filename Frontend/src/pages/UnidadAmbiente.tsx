@@ -4,13 +4,13 @@ import { motion } from 'motion/react';
 import { FadeIn, Stagger, itemVariant } from '../components/figma/animations';
 import { ImageCarousel } from '../components/ImageCarousel';
 
-import amb02 from '../img/unidades/ambiente/uni_rec_nat_02_1.avif';
-import amb05 from '../img/unidades/ambiente/uni_rec_nat_05_1.avif';
-import amb06 from '../img/unidades/ambiente/uni_rec_nat_06_1.avif';
-import amb07 from '../img/unidades/ambiente/uni_rec_nat_07.avif';
-import amb08 from '../img/unidades/ambiente/uni_rec_nat_08_1.avif';
-import amb10 from '../img/unidades/ambiente/uni_rec_nat_10_1.avif';
-import amb11 from '../img/unidades/ambiente/uni_rec_nat_11.avif';
+import amb02 from '../img/unidades/ambiente/uni_rec_nat_02_1.webp';
+import amb05 from '../img/unidades/ambiente/uni_rec_nat_05_1.webp';
+import amb06 from '../img/unidades/ambiente/uni_rec_nat_06_1.webp';
+import amb07 from '../img/unidades/ambiente/uni_rec_nat_07.webp';
+import amb08 from '../img/unidades/ambiente/uni_rec_nat_08_1.webp';
+import amb10 from '../img/unidades/ambiente/uni_rec_nat_10_1.webp';
+import amb11 from '../img/unidades/ambiente/uni_rec_nat_11.webp';
 
 const galeriaBase = [
   { src: amb02, alt: 'Proyecto ambiente 02' },
