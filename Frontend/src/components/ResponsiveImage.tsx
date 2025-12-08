@@ -70,8 +70,21 @@ export function ResponsiveImage({
 }: ResponsiveImageProps) {
   const [didError, setDidError] = useState(false);
 
-  // Remove extension from src to get base path
-  const srcBase = src.replace(/\.(webp|jpg|jpeg|png|gif)$/i, '');
+  // Extract filename from Vite-processed URL (e.g., /assets/image-hash.webp -> image)
+  const getFilenameBase = (url: string): string => {
+    const match = url.match(/\/([^/]+)-[a-zA-Z0-9]+\.(webp|jpg|jpeg|png|gif)$/i);
+    if (match) return match[1]; // Returns "carrusel1" from "carrusel1-hash.webp"
+    // Fallback: just remove extension
+    return url.replace(/\.(webp|jpg|jpeg|png|gif)$/i, '');
+  };
+
+  // Check if this is a Vite asset URL
+  const isViteAsset = src.includes('/assets/');
+  
+  // For Vite assets, construct public folder paths
+  // For other paths, use the src as-is
+  const srcBase = isViteAsset ? `/img/${getFilenameBase(src)}` : src.replace(/\.(webp|jpg|jpeg|png|gif)$/i, '');
+  
   // Determine original extension
   const extMatch = src.match(/\.(webp|jpg|jpeg|png|gif)$/i);
   const ext = extMatch ? extMatch[1].toLowerCase() : 'jpg';
