@@ -45,7 +45,7 @@ export default function AboutPage() {
             </motion.div>
             <motion.div variants={itemVariant} className="rounded-2xl overflow-hidden shadow-2xl h-[400px]">
               <ImageWithFallback
-                src={new URL('../img/aboutus1.jpg', import.meta.url).href}
+                src={new URL('../img/aboutus1.webp', import.meta.url).href}
                 alt="Reunión comunitaria"
                 className="w-full h-full object-cover"
               />
@@ -57,7 +57,7 @@ export default function AboutPage() {
           <Stagger className="grid md:grid-cols-2 gap-12 items-center">
             <motion.div variants={itemVariant} className="order-2 md:order-1 rounded-2xl overflow-hidden shadow-2xl h-[400px]">
               <ImageWithFallback
-                src={new URL('../img/aboutus2.jpg', import.meta.url).href}
+                src={new URL('../img/aboutus2.webp', import.meta.url).href}
                 alt="Ecosistemas y sostenibilidad"
                 className="w-full h-full object-cover"
               />
@@ -156,7 +156,7 @@ export default function AboutPage() {
             <motion.div variants={itemVariant} className="order-2 md:order-1">
               <div className="relative rounded-3xl overflow-hidden shadow-2xl">
                 <ImageWithFallback
-                  src={new URL('../img/mapa1.png', import.meta.url).href}
+                  src={new URL('../img/mapa1.webp', import.meta.url).href}
                   alt="Alcance territorial"
                   className="w-full h-[420px]"
                 />

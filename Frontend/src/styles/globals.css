@@ -134,6 +134,7 @@ html {
 
   body {
     @apply bg-background text-foreground;
+    position: relative;
     overflow-x: hidden;
   }
 

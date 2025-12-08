@@ -10,6 +10,7 @@ import {
     approveRequestByManager,
     rejectRequest,
     RequestEntry,
+    RequestResponse,
 } from '../../lib/api';
 import { useAuth } from '../../context/AuthContext';
 
@@ -26,6 +27,11 @@ export default function RequestsPage() {
     const canViewUnit = isChief;
     const showMyRequestsTab = !(isManager || isAdmin);
     const approvalScope: ApprovalScope = isManager ? 'manager' : isChief ? 'chief' : null;
+
+    const normalizeRequests = (value: RequestResponse['data']): RequestEntry[] => {
+        if (!value) return [];
+        return Array.isArray(value) ? [...value] : [value];
+    };
 
     const tabs = useMemo(() => {
         const base: Array<{ id: TabId; label: string; description: string }> = [];
@@ -82,7 +88,7 @@ export default function RequestsPage() {
                 } else if (activeTab === 'approvals') {
                     if (approvalScope === 'chief') response = await fetchPendingRequestsForChief();
                     else if (approvalScope === 'manager') response = await fetchPendingRequestsForManager();
-                    else response = { success: true, data: [] } as const;
+                    else response = { success: true, data: [] as RequestEntry[] };
                 } else {
                     response = await fetchMyRequests();
                 }
@@ -90,7 +96,7 @@ export default function RequestsPage() {
                 if (cancelled) return;
 
                 if (response.success && response.data) {
-                    const data = Array.isArray(response.data) ? response.data : [response.data];
+                    const data = normalizeRequests(response.data);
                     setRequests(data);
                 } else {
                     setRequests([]);

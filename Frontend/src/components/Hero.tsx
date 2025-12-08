@@ -23,7 +23,7 @@ export function Hero() {
   ];
 
   // Resolve logo asset
-  const logo = new URL('../img/logo01.png', import.meta.url).href;
+  const logo = new URL('../img/logo01.webp', import.meta.url).href;
 
   // JS slideshow state
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -37,7 +37,11 @@ export function Hero() {
   }, [carouselSvgs.length]);
 
   return (
-    <section ref={ref} className="relative min-h-[100dvh] md:h-[700px] md:min-h-0 w-full max-w-full overflow-hidden flex flex-col">
+    <section
+      ref={ref}
+      className="relative min-h-[100dvh] md:h-[700px] md:min-h-0 w-full max-w-full overflow-hidden flex flex-col"
+      style={{ position: 'relative' }}
+    >
       {/* Slideshow de fondo (JS-controlled) con ligera parallax */}
       <motion.div className="absolute inset-0 z-0 overflow-hidden" style={{ y }} aria-hidden>
         {/* Cada imagen como slide absoluto, solo visible cuando es el currentSlide */}
@@ -52,6 +56,8 @@ export function Hero() {
               alt=""
               className="w-full h-full object-cover"
               draggable={false}
+              loading={i === 0 ? 'eager' : 'lazy'}
+              decoding="async"
             />
           </div>
         ))}
@@ -116,6 +122,8 @@ export function Hero() {
                 src={logo}
                 alt="Logo Consejo Higuito"
                 className="h-24 w-auto md:h-32 lg:h-40 drop-shadow-2xl"
+                loading="lazy"
+                decoding="async"
               />
             </motion.div>
 
