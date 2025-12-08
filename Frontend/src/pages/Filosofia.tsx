@@ -2,7 +2,7 @@ import { FadeIn, Stagger, itemVariant } from '../components/figma/animations';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { motion } from 'motion/react';
 import { Target, Eye, Share2, Users, Building2, ChevronRight } from 'lucide-react';
-import { InstitutionalOrgChart } from '../components/InstitutionalOrgChart';
+import { HiguitoOrgChart } from '../components/HiguitoOrgChart';
 
 // Resolve assets from src/img
 const presidente = new URL('../img/img_filosofia_damian_galdamez.jpg', import.meta.url).href;
@@ -303,32 +303,32 @@ export default function FilosofiaPage() {
             {/* Organigrama */}
                 <motion.div variants={itemVariant} className="border border-gray-200 rounded-3xl p-6 md:p-10 shadow-sm bg-white">
                   <div className="flex flex-col gap-3 mb-8">
-                    <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-1 text-sm font-semibold text-emerald-700">
+                    <div className="inline-flex items-center gap-2 rounded-full bg-amber-50 px-4 py-1 text-sm font-semibold text-amber-700">
                       <Users className="w-4 h-4" />
-                      Mapa institucional estático
+                      Organigrama interactivo
                     </div>
-                    <h4 className="text-2xl font-bold text-gray-900">Organigrama Institucional</h4>
+                    <h4 className="text-2xl font-bold text-gray-900">Mapa institucional en componentes</h4>
                     <p className="text-gray-600 text-sm max-w-3xl">
-                      Representación oficial del CIH. Toca o haz clic sobre la imagen para abrirla en una pestaña nueva y verla con más detalle según lo necesites.
+                      Visualiza la relación entre órganos de gobierno, comités y unidades técnicas dentro del CIH. Desplázate horizontalmente para conocer cada nivel del esquema.
                     </p>
                   </div>
                   <div className="space-y-6">
                     <div className="rounded-3xl bg-gradient-to-br from-slate-50 via-white to-slate-100 p-4 shadow-inner ring-1 ring-slate-100">
-                      <InstitutionalOrgChart />
+                      <HiguitoOrgChart />
                     </div>
 
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 text-sm text-gray-700">
                       <div className="flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50 px-3 py-2">
                         <span className="inline-block w-4 h-4 rounded-full bg-[#0f172a]" />
-                        <p className="font-semibold text-gray-900">Consejo y Gobernanza</p>
+                        <p className="font-semibold text-gray-900">Consejo y gobernanza</p>
                       </div>
                       <div className="flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50 px-3 py-2">
                         <span className="inline-block w-4 h-4 rounded-full bg-[#fcd34d]" />
-                        <p className="font-semibold text-gray-900">Comités Estratégicos</p>
+                        <p className="font-semibold text-gray-900">Comités estratégicos</p>
                       </div>
                       <div className="flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50 px-3 py-2">
                         <span className="inline-block w-4 h-4 rounded-full bg-[#c7d2fe]" />
-                        <p className="font-semibold text-gray-900">Unidades Técnicas</p>
+                        <p className="font-semibold text-gray-900">Unidades técnicas</p>
                       </div>
                       <div className="flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50 px-3 py-2">
                         <span className="inline-block w-4 h-4 rounded-full bg-[#bae6fd]" />
@@ -341,11 +341,12 @@ export default function FilosofiaPage() {
                       <div className="flex items-start gap-3 rounded-2xl border border-slate-100 bg-slate-50 px-3 py-2">
                         <ChevronRight className="w-4 h-4 text-purple-600 mt-0.5" />
                         <p className="text-sm">
-                          Pulsa “Ver grande” para abrir el esquema en alta resolución y compartirlo directamente en tus presentaciones.
+                          Navega, haz zoom o captura esta vista para tus presentaciones o informes de gestión.
                         </p>
                       </div>
                     </div>
                   </div>
+
                 </motion.div>
           </Stagger>
 
