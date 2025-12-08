@@ -4,11 +4,11 @@ import { ArrowRight, Sparkles } from 'lucide-react';
 import { useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ResponsiveImage } from './ResponsiveImage';
-import logo from '../img/logo01.webp';
-import carrusel1 from '../img/svg/carrusel1.webp';
-import carrusel2 from '../img/svg/carrusel2.webp';
-import carrusel3 from '../img/svg/carrusel3.webp';
-import carrusel4 from '../img/svg/carrusel4.webp';
+import logo from '../img/logo01.avif';
+import carrusel1 from '../img/svg/carrusel1.avif';
+import carrusel2 from '../img/svg/carrusel2.avif';
+import carrusel3 from '../img/svg/carrusel3.avif';
+import carrusel4 from '../img/svg/carrusel4.avif';
 
 export function Hero() {
   const ref = useRef(null);
@@ -90,6 +90,7 @@ export function Hero() {
               sizes="100vw"
               className="w-full h-full object-cover"
               loading={i === 0 ? 'eager' : 'lazy'}
+              fetchPriority={i === 0 ? 'high' : 'low'}
             />
           </div>
         ))}

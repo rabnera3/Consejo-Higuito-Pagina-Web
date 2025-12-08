@@ -5,8 +5,8 @@ import { Target, Eye, Share2, Users, Building2, ChevronRight } from 'lucide-reac
 import { HiguitoOrgChart } from '../components/HiguitoOrgChart';
 
 // Resolve assets from src/img
-const presidente = new URL('../img/img_filosofia_damian_galdamez.webp', import.meta.url).href;
-const gerente = new URL('../img/img_filosofia_marisela-espinoza.webp', import.meta.url).href;
+const presidente = new URL('../img/img_filosofia_damian_galdamez.avif', import.meta.url).href;
+const gerente = new URL('../img/img_filosofia_marisela-espinoza.avif', import.meta.url).href;
 
 const whoStats = [
   { label: 'Municipios socios', value: '15', detail: 'Desde la Subcuenca Higuito' },

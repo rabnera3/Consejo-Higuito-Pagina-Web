@@ -4,13 +4,13 @@ import { motion } from 'motion/react';
 import { FadeIn, Stagger, itemVariant } from '../components/figma/animations';
 import { ImageCarousel } from '../components/ImageCarousel';
 
-import mon1 from '../img/unidades/monitoreo/gallery_unidad-monitoreo_1-400x284_1.webp';
-import mon2 from '../img/unidades/monitoreo/gallery_unidad-monitoreo_2.webp';
-import mon3 from '../img/unidades/monitoreo/gallery_unidad-monitoreo_3-400x284_1.webp';
-import mon4 from '../img/unidades/monitoreo/gallery_unidad-monitoreo_4-400x284_1.webp';
-import mon5 from '../img/unidades/monitoreo/gallery_unidad-monitoreo_5-400x284_1.webp';
-import mon6 from '../img/unidades/monitoreo/gallery_unidad-monitoreo_6.webp';
-import mon7 from '../img/unidades/monitoreo/gallery_unidad-monitoreo_7-400x284_1.webp';
+import mon1 from '../img/unidades/monitoreo/gallery_unidad-monitoreo_1-400x284_1.avif';
+import mon2 from '../img/unidades/monitoreo/gallery_unidad-monitoreo_2.avif';
+import mon3 from '../img/unidades/monitoreo/gallery_unidad-monitoreo_3-400x284_1.avif';
+import mon4 from '../img/unidades/monitoreo/gallery_unidad-monitoreo_4-400x284_1.avif';
+import mon5 from '../img/unidades/monitoreo/gallery_unidad-monitoreo_5-400x284_1.avif';
+import mon6 from '../img/unidades/monitoreo/gallery_unidad-monitoreo_6.avif';
+import mon7 from '../img/unidades/monitoreo/gallery_unidad-monitoreo_7-400x284_1.avif';
 
 const galeriaBase = [
   { src: mon1, alt: 'Proyecto monitoreo 1' },

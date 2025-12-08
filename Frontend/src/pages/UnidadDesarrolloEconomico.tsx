@@ -4,13 +4,13 @@ import { motion } from 'motion/react';
 import { FadeIn, Stagger, itemVariant } from '../components/figma/animations';
 import { ImageCarousel } from '../components/ImageCarousel';
 
-import desa01 from '../img/unidades/desarrollo/uni_desa_eco_01.webp';
-import desa03 from '../img/unidades/desarrollo/uni_desa_eco_03_1.webp';
-import desa05 from '../img/unidades/desarrollo/uni_desa_eco_05_1.webp';
-import desa08 from '../img/unidades/desarrollo/uni_desa_eco_08_1.webp';
-import desa09 from '../img/unidades/desarrollo/uni_desa_eco_09_1.webp';
-import desa11 from '../img/unidades/desarrollo/uni_desa_eco_11_1.webp';
-import desa12 from '../img/unidades/desarrollo/uni_desa_eco_12.webp';
+import desa01 from '../img/unidades/desarrollo/uni_desa_eco_01.avif';
+import desa03 from '../img/unidades/desarrollo/uni_desa_eco_03_1.avif';
+import desa05 from '../img/unidades/desarrollo/uni_desa_eco_05_1.avif';
+import desa08 from '../img/unidades/desarrollo/uni_desa_eco_08_1.avif';
+import desa09 from '../img/unidades/desarrollo/uni_desa_eco_09_1.avif';
+import desa11 from '../img/unidades/desarrollo/uni_desa_eco_11_1.avif';
+import desa12 from '../img/unidades/desarrollo/uni_desa_eco_12.avif';
 
 const galeriaBase = [
   { src: desa01, alt: 'Proyecto desarrollo 01' },

@@ -2,12 +2,12 @@ import { useMemo } from 'react';
 import { Shield, Target, CheckCircle2, Image as ImageIcon } from 'lucide-react';
 import { motion } from 'motion/react';
 
-import fort03 from '../img/unidades/fortalecimiento/uni_forta_inst_03_1.webp';
-import fort05 from '../img/unidades/fortalecimiento/uni_forta_inst_05_1.webp';
-import fort07 from '../img/unidades/fortalecimiento/uni_forta_inst_07_1.webp';
-import fort08 from '../img/unidades/fortalecimiento/uni_forta_inst_08_1.webp';
-import fort14 from '../img/unidades/fortalecimiento/uni_forta_inst_14_1.webp';
-import fort21 from '../img/unidades/fortalecimiento/uni_forta_inst_21_1.webp';
+import fort03 from '../img/unidades/fortalecimiento/uni_forta_inst_03_1.avif';
+import fort05 from '../img/unidades/fortalecimiento/uni_forta_inst_05_1.avif';
+import fort07 from '../img/unidades/fortalecimiento/uni_forta_inst_07_1.avif';
+import fort08 from '../img/unidades/fortalecimiento/uni_forta_inst_08_1.avif';
+import fort14 from '../img/unidades/fortalecimiento/uni_forta_inst_14_1.avif';
+import fort21 from '../img/unidades/fortalecimiento/uni_forta_inst_21_1.avif';
 import { FadeIn, Stagger, itemVariant } from '../components/figma/animations';
 import { ImageCarousel } from '../components/ImageCarousel';
 

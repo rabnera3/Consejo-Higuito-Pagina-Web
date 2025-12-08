@@ -45,7 +45,7 @@ export default function AboutPage() {
             </motion.div>
             <motion.div variants={itemVariant} className="rounded-2xl overflow-hidden shadow-2xl h-[400px]">
               <ResponsiveImage
-                src={new URL('../img/aboutus1.webp', import.meta.url).href}
+                src={new URL('../img/aboutus1.avif', import.meta.url).href}
                 alt="Reunión comunitaria"
                 sizes="(max-width: 640px) 480px, (max-width: 1024px) 768px, 1200px"
                 className="w-full h-full object-cover"
@@ -58,7 +58,7 @@ export default function AboutPage() {
           <Stagger className="grid md:grid-cols-2 gap-12 items-center">
             <motion.div variants={itemVariant} className="order-2 md:order-1 rounded-2xl overflow-hidden shadow-2xl h-[400px]">
               <ResponsiveImage
-                src={new URL('../img/aboutus2.webp', import.meta.url).href}
+                src={new URL('../img/aboutus2.avif', import.meta.url).href}
                 alt="Ecosistemas y sostenibilidad"
                 sizes="(max-width: 640px) 480px, (max-width: 1024px) 768px, 1200px"
                 className="w-full h-full object-cover"
@@ -116,7 +116,7 @@ export default function AboutPage() {
                 </div>
                 <div className="rounded-2xl overflow-hidden shadow-xl">
                   <ResponsiveImage
-                    src={new URL('../img/aboutus3.webp', import.meta.url).href}
+                    src={new URL('../img/aboutus3.avif', import.meta.url).href}
                     alt="Trabajo de campo colaborativo"
                     sizes="(max-width: 640px) 480px, (max-width: 1024px) 500px, 600px"
                     className="w-full aspect-[4/3] object-cover"
@@ -159,7 +159,7 @@ export default function AboutPage() {
             <motion.div variants={itemVariant} className="order-2 md:order-1">
               <div className="relative rounded-3xl overflow-hidden shadow-2xl">
                 <ResponsiveImage
-                  src={new URL('../img/mapa1.webp', import.meta.url).href}
+                  src={new URL('../img/mapa1.avif', import.meta.url).href}
                   alt="Alcance territorial"
                   sizes="(max-width: 640px) 480px, (max-width: 1024px) 768px, 1280px"
                   className="w-full h-[420px] object-cover"
@@ -212,7 +212,7 @@ export default function AboutPage() {
               </motion.div>
               <motion.div variants={itemVariant} className="h-[400px] md:h-full">
                 <ResponsiveImage
-                  src={new URL('../img/aboutus4.webp', import.meta.url).href}
+                  src={new URL('../img/aboutus4.avif', import.meta.url).href}
                   alt="Agradecimientos y cooperación"
                   sizes="(max-width: 640px) 480px, (max-width: 1024px) 500px, 600px"
                   className="w-full h-full object-cover"
