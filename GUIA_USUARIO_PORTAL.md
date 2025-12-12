@@ -1,15 +1,15 @@
 # Guía de Usuario — Portal Interno (Consejo Intermunicipal Higuito)
 
-Esta guía explica, paso a paso y en lenguaje sencillo, cómo usar el **portal interno**.
+Esta guía explica, paso a paso cómo usar el **portal interno**.
 
 ## 1) Cómo entrar
 
-- Entra al portal usando el enlace que te compartió **Administración/TI**.
+- Entra al portal usando el enlace que te compartió **Administración/Gerencia**.
 - Inicia sesión con tu **correo** y **contraseña**.
 
 Si el sistema te saca o deja de responder, vuelve a intentar iniciar sesión.
 
-## 2) Roles y permisos (en sencillo)
+## 2) Roles y permisos
 
 El portal muestra opciones diferentes según tu rol. Esto es normal.
 
@@ -82,6 +82,6 @@ Si tu rol lo permite, verás opciones para:
 
 ## 5) Soporte / Problemas comunes
 
-- **No puedo entrar**: revisa que el correo/contraseña estén correctos. Si no funciona, pide ayuda a **Administración/TI**.
+- **No puedo entrar**: revisa que el correo/contraseña estén correctos. Si no funciona, pide ayuda a **Administración**.
 - **No veo botones o secciones**: puede ser normal por tu rol. Consulta con **Administración**.
-- **No carga información o sale error**: recarga la página e inténtalo de nuevo. Si persiste, reporta el problema a **TI**.
+- **No carga información o sale error**: recarga la página e inténtalo de nuevo. Si persiste, reporta el problema a **Administración**.
