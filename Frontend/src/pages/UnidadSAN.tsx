@@ -1,8 +1,9 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Target, CheckCircle2, Image as ImageIcon, Wheat } from 'lucide-react';
 import { motion } from 'motion/react';
 import { FadeIn, Stagger, itemVariant } from '../components/figma/animations';
 import { ImageCarousel } from '../components/ImageCarousel';
+import { ImageModal } from '../components/ImageModal';
 
 import san1 from '../img/unidades/san/gallery_unidad-san_1.webp';
 import san11 from '../img/unidades/san/gallery_unidad-san_11_1.webp';
@@ -29,7 +30,7 @@ const lineamientos = [
   'Promover la educación alimentaria con hábitos y estilos de vida saludable',
   'Fortalecer las capacidades humanas e institucionales en la población promoviendo una participación equitativa que facilite la transferencia de conocimientos, metodologías, buenas prácticas y tecnologías para un abordaje integral de SAN',
   'Gestión de la SAN en alianzas con otros actores del territorio',
-  'Monitoreo y seguimiento de acciones SAN',
+  'Seguimiento de acciones SAN',
 ];
 
 const galeriaBase = [
@@ -43,6 +44,8 @@ const galeriaBase = [
 ];
 
 export default function UnidadSANPage() {
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
   const galeriaLocales = useMemo(() => {
     const shuffled = [...galeriaBase];
     for (let i = shuffled.length - 1; i > 0; i -= 1) {
@@ -77,30 +80,28 @@ export default function UnidadSANPage() {
         
         {/* Imágenes destacadas */}
         <Stagger className="grid md:grid-cols-2 gap-8">
-          <motion.div variants={itemVariant} className="rounded-2xl overflow-hidden shadow-lg">
+          <motion.div
+            variants={itemVariant}
+            className="rounded-2xl overflow-hidden shadow-lg cursor-pointer group"
+            onClick={() => setSelectedImage(san14)}
+          >
             <img
               src={san14}
               alt="Huerto familiar en Rio Colorado"
-              className="w-full h-[300px] object-cover"
+              className="w-full h-[300px] object-cover transition-transform duration-500 group-hover:scale-110"
             />
-            <div className="bg-white p-4 border-t border-gray-200">
-              <p className="text-gray-700 text-sm leading-relaxed">
-                <span className="font-semibold">Huerto familiar</span> en Rio Colorado, San Pedro Copán
-              </p>
-            </div>
           </motion.div>
 
-          <motion.div variants={itemVariant} className="rounded-2xl overflow-hidden shadow-lg">
+          <motion.div
+            variants={itemVariant}
+            className="rounded-2xl overflow-hidden shadow-lg cursor-pointer group"
+            onClick={() => setSelectedImage(san17)}
+          >
             <img
               src={san17}
               alt="Sistema de riego"
-              className="w-full h-[300px] object-cover"
+              className="w-full h-[300px] object-cover transition-transform duration-500 group-hover:scale-110"
             />
-            <div className="bg-white p-4 border-t border-gray-200">
-              <p className="text-gray-700 text-sm leading-relaxed">
-                <span className="font-semibold">Asistencia técnica</span> implementación de sistemas de riego
-              </p>
-            </div>
           </motion.div>
         </Stagger>
 
@@ -432,7 +433,7 @@ export default function UnidadSANPage() {
               <summary className="cursor-pointer p-6 hover:bg-gray-50 transition-colors list-none">
                 <div className="flex items-center justify-between">
                   <h3 className="text-xl font-semibold text-gray-900 flex-1">
-                    7. Monitoreo y seguimiento de la SAN
+                    7. Seguimiento de la SAN
                   </h3>
                   <svg className="w-6 h-6 text-green-600 transform group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -476,6 +477,8 @@ export default function UnidadSANPage() {
         </div>
 
       </div>
+
+      <ImageModal src={selectedImage} onClose={() => setSelectedImage(null)} />
     </div>
   );
 }

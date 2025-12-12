@@ -59,7 +59,6 @@ WHERE NOT EXISTS (SELECT 1 FROM departments WHERE name = 'Seguridad Alimentaria 
 SET @role_admin_id := (SELECT id FROM roles WHERE slug = 'admin' LIMIT 1);
 SET @role_gerente_id := (SELECT id FROM roles WHERE slug = 'gerente' LIMIT 1);
 SET @role_jefe_id := (SELECT id FROM roles WHERE slug = 'jefe' LIMIT 1);
-SET @role_tecnico_id := (SELECT id FROM roles WHERE slug = 'tecnico' LIMIT 1);
 SET @role_empleado_id := (SELECT id FROM roles WHERE slug = 'empleado' LIMIT 1);
 
 SET @demo_password := '$2y$10$NdDtHSDAukWB5.NJtgaIz.Uz9Pb4ypgfVb9slH6Q2u8K9AqkUvFxi';
@@ -70,7 +69,7 @@ VALUES
     ('María Fernández', 'direccion@higuito.local', @demo_password, @role_admin_id, @dir_ejecutiva_id, 'active'),
     ('Luis Alvarado', 'gerencia@higuito.local', @demo_password, @role_gerente_id, @dir_ejecutiva_id, 'active'),
     ('Karla Picado', 'jefe.planificacion@higuito.local', @demo_password, @role_jefe_id, @planificacion_id, 'active'),
-    ('Bruno Salas', 'tecnico.ambiente@higuito.local', @demo_password, @role_tecnico_id, @ambiental_id, 'active'),
+    ('Bruno Salas', 'tecnico.ambiente@higuito.local', @demo_password, @role_empleado_id, @ambiental_id, 'active'),
     ('Ana Solano', 'empleado@higuito.local', @demo_password, @role_empleado_id, @fortalecimiento_id, 'active') AS new
 ON DUPLICATE KEY UPDATE
     name = new.name,

@@ -7,7 +7,6 @@ const shortcuts = [
   { to: '/portal/gerencia', label: 'Panel Gerente', description: 'KPIs ejecutivos y aprobaciones' },
   { to: '/portal/jefatura', label: 'Panel Jefe', description: 'Coordinación de unidad y equipo' },
   { to: '/portal/empleado', label: 'Panel Empleado', description: 'Perfil personal y solicitudes' },
-  { to: '/portal/tecnico', label: 'Panel de Campo', description: 'Reportes de visita y bitácoras' },
 ];
 
 export default function PortalOverviewPage() {

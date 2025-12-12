@@ -11,13 +11,12 @@ const routeMeta: Record<string, { title: string; subtitle: string }> = {
   admin: { title: '', subtitle: '' },
   gerencia: { title: '', subtitle: '' },
   jefatura: { title: '', subtitle: '' },
-  tecnico: { title: '', subtitle: '' },
   empleado: { title: '', subtitle: '' },
   'blog-manager': { title: '', subtitle: '' },
   'blog-pendientes': { title: '', subtitle: '' },
 };
 
-const DEFAULT_SEGMENTS = ['dashboard', 'directorio', 'admin', 'gerencia', 'jefatura', 'tecnico', 'empleado'];
+const DEFAULT_SEGMENTS = ['dashboard', 'directorio', 'admin', 'gerencia', 'jefatura', 'empleado'];
 
 function getSegment(pathname: string) {
   const segment = pathname.replace(/^\/portal\/?/, '').split('/')[0];
@@ -36,9 +35,8 @@ export default function PortalLayout() {
     admin: ['dashboard', 'admin', 'directorio', 'planificacion', 'solicitudes', 'blog-manager', 'blog-nuevo', 'blog-pendientes', 'empleado'],
     gerente: ['dashboard', 'gerencia', 'admin', 'directorio', 'planificacion', 'solicitudes', 'blog-manager', 'blog-nuevo', 'blog-pendientes', 'empleado'],
     gerencia: ['dashboard', 'gerencia', 'admin', 'directorio', 'planificacion', 'solicitudes', 'blog-manager', 'blog-nuevo', 'blog-pendientes', 'empleado'],
-    jefe: ['dashboard', 'jefatura', 'directorio', 'empleado', 'planificacion', 'blog-manager', 'blog-nuevo'],
-    jefatura: ['dashboard', 'jefatura', 'directorio', 'empleado', 'planificacion', 'blog-manager', 'blog-nuevo'],
-    tecnico: ['dashboard', 'tecnico', 'directorio', 'empleado', 'planificacion', 'reportes-visita', 'bitacora-campo', 'solicitudes'],
+    jefe: ['dashboard', 'jefatura', 'directorio', 'empleado', 'planificacion', 'solicitudes', 'blog-manager', 'blog-nuevo'],
+    jefatura: ['dashboard', 'jefatura', 'directorio', 'empleado', 'planificacion', 'solicitudes', 'blog-manager', 'blog-nuevo'],
     empleado: ['dashboard', 'empleado', 'directorio', 'planificacion', 'solicitudes'],
   };
   const allowedSegments = roleAllowedMap[user?.role ?? ''] ?? roleAllowedMap.empleado;

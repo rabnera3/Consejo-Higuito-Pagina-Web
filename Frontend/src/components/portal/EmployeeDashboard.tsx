@@ -63,11 +63,6 @@ export function EmployeeDashboard() {
                         <Link to="/portal/solicitudes" className="btn primary">
                             Ver Solicitudes
                         </Link>
-                        {user?.role === 'tecnico' && (
-                            <Link to="/portal/tecnico" className="btn secondary">
-                                Panel de Campo
-                            </Link>
-                        )}
                         <Link to="/portal/directorio" className="btn secondary">
                             Ver Directorio
                         </Link>

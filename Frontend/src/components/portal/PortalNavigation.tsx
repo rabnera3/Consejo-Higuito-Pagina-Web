@@ -8,7 +8,6 @@ const navItems = [
   { key: 'gerencia', label: 'Panel Gerente', to: '/portal/gerencia' },
   { key: 'jefatura', label: 'Panel Jefe', to: '/portal/jefatura' },
   { key: 'empleado', label: 'Panel Empleado', to: '/portal/empleado' },
-  { key: 'tecnico', label: 'Panel de Campo', to: '/portal/tecnico' },
 ];
 
 interface PortalNavigationProps {

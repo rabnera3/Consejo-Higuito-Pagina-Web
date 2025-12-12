@@ -27,15 +27,6 @@ final class DashboardService
                 ['label' => 'Mi perfil', 'href' => '/panel/empleado', 'desc' => 'Datos y solicitudes'],
             ],
         ],
-        'tecnico' => [
-            'title' => 'Panel Técnico',
-            'description' => 'Herramientas técnicas y administración de datos.',
-            'actions' => [
-                ['label' => 'Panel Técnico', 'href' => '/panel/tecnico', 'desc' => 'Importación y gestión', 'primary' => true],
-                ['label' => 'Directorio', 'href' => '/empleados', 'desc' => 'Información del personal'],
-                ['label' => 'Mi perfil', 'href' => '/panel/empleado', 'desc' => 'Datos y solicitudes'],
-            ],
-        ],
         'empleado' => [
             'title' => 'Mi Espacio',
             'description' => 'Servicios para empleados y atajos personales.',
@@ -63,10 +54,6 @@ final class DashboardService
 
         if ($roleId === 3) {
             return 'jefe';
-        }
-
-        if ($roleId === 4) {
-            return 'tecnico';
         }
 
         return 'empleado';

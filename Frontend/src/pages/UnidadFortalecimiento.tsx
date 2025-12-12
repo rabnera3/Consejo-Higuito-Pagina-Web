@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Shield, Target, CheckCircle2, Image as ImageIcon } from 'lucide-react';
 import { motion } from 'motion/react';
 
@@ -10,6 +10,7 @@ import fort14 from '../img/unidades/fortalecimiento/uni_forta_inst_14_1.webp';
 import fort21 from '../img/unidades/fortalecimiento/uni_forta_inst_21_1.webp';
 import { FadeIn, Stagger, itemVariant } from '../components/figma/animations';
 import { ImageCarousel } from '../components/ImageCarousel';
+import { ImageModal } from '../components/ImageModal';
 
 const galeriaBase = [
   { src: fort03, alt: 'Proyecto fortalecimiento 03' },
@@ -30,6 +31,8 @@ const responsabilidades = [
 ];
 
 export default function UnidadFortalecimientoPage() {
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
   const galeriaLocales = useMemo(() => {
     const shuffled = [...galeriaBase];
     for (let i = shuffled.length - 1; i > 0; i -= 1) {
@@ -63,34 +66,32 @@ export default function UnidadFortalecimientoPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20 space-y-20">
         {/* Imágenes destacadas */}
         <Stagger className="grid md:grid-cols-2 gap-8">
-          <motion.div variants={itemVariant} className="rounded-2xl overflow-hidden shadow-lg">
+          <motion.div 
+            variants={itemVariant} 
+            className="rounded-2xl overflow-hidden shadow-lg cursor-pointer group"
+            onClick={() => setSelectedImage(fort03)}
+          >
             <img
               src={fort03}
               alt="Taller de fortalecimiento institucional"
-              className="w-full h-[300px] object-cover"
+              className="w-full h-[300px] object-cover transition-transform duration-500 group-hover:scale-110"
               loading="eager"
               decoding="async"
             />
-            <div className="bg-white p-4 border-t border-gray-200">
-              <p className="text-gray-700 text-sm leading-relaxed">
-                <span className="font-semibold">Fortalecimiento institucional</span> en procesos administrativos y de gobernanza.
-              </p>
-            </div>
           </motion.div>
 
-          <motion.div variants={itemVariant} className="rounded-2xl overflow-hidden shadow-lg">
+          <motion.div 
+            variants={itemVariant} 
+            className="rounded-2xl overflow-hidden shadow-lg cursor-pointer group"
+            onClick={() => setSelectedImage(fort05)}
+          >
             <img
               src={fort05}
               alt="Reunión de fortalecimiento municipal"
-              className="w-full h-[300px] object-cover"
+              className="w-full h-[300px] object-cover transition-transform duration-500 group-hover:scale-110"
               loading="lazy"
               decoding="async"
             />
-            <div className="bg-white p-4 border-t border-gray-200">
-              <p className="text-gray-700 text-sm leading-relaxed">
-                <span className="font-semibold">Capacitación y asistencia técnica</span> en fortalecimiento administrativo local.
-              </p>
-            </div>
           </motion.div>
         </Stagger>
 
@@ -172,6 +173,8 @@ export default function UnidadFortalecimientoPage() {
           </motion.div>
         </div>
       </div>
+
+      <ImageModal src={selectedImage} onClose={() => setSelectedImage(null)} />
     </div>
   );
 }

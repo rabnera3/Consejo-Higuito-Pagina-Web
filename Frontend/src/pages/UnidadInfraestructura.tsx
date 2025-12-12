@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Building2, Target, CheckCircle2, Image as ImageIcon } from 'lucide-react';
 import { motion } from 'motion/react';
 
@@ -16,6 +16,7 @@ import infra20 from '../img/unidades/infraestructura/uni_infra_so_20_1.webp';
 import infra24 from '../img/unidades/infraestructura/uni_infra_so_24_1.webp';
 import { FadeIn, Stagger, itemVariant } from '../components/figma/animations';
 import { ImageCarousel } from '../components/ImageCarousel';
+import { ImageModal } from '../components/ImageModal';
 
 const responsabilidades = [
   'Liderar la ejecución de los estudios de campo, topográficos, de ingeniería y de financiamiento, de proyectos de infraestructura social.',
@@ -44,6 +45,8 @@ const galeriaBase = [
 ];
 
 export default function UnidadInfraestructuraPage() {
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
   const galeriaLocales = useMemo(() => {
     const shuffled = [...galeriaBase];
     for (let i = shuffled.length - 1; i > 0; i -= 1) {
@@ -78,34 +81,32 @@ export default function UnidadInfraestructuraPage() {
         
         {/* Imágenes destacadas */}
         <Stagger className="grid md:grid-cols-2 gap-8">
-          <motion.div variants={itemVariant} className="rounded-2xl overflow-hidden shadow-lg">
+          <motion.div
+            variants={itemVariant}
+            className="rounded-2xl overflow-hidden shadow-lg cursor-pointer group"
+            onClick={() => setSelectedImage(infra01)}
+          >
             <img
               src={infra01}
               alt="Tanque de agua en Aguacaliente"
-              className="w-full h-[300px] object-cover"
+              className="w-full h-[300px] object-cover transition-transform duration-500 group-hover:scale-110"
               loading="eager"
               decoding="async"
             />
-            <div className="bg-white p-4 border-t border-gray-200">
-              <p className="text-gray-700 text-sm leading-relaxed">
-                <span className="font-semibold">Trabajos constructivos en tanque de almacenamiento de agua</span> para distribución a la comunidad. Aguacaliente, Veracruz, Copán
-              </p>
-            </div>
           </motion.div>
 
-          <motion.div variants={itemVariant} className="rounded-2xl overflow-hidden shadow-lg">
+          <motion.div
+            variants={itemVariant}
+            className="rounded-2xl overflow-hidden shadow-lg cursor-pointer group"
+            onClick={() => setSelectedImage(infra02)}
+          >
             <img
               src={infra02}
               alt="Alcaldía de Concepción"
-              className="w-full h-[300px] object-cover"
+              className="w-full h-[300px] object-cover transition-transform duration-500 group-hover:scale-110"
               loading="lazy"
               decoding="async"
             />
-            <div className="bg-white p-4 border-t border-gray-200">
-              <p className="text-gray-700 text-sm leading-relaxed">
-                <span className="font-semibold">Trabajos constructivos en segundo nivel</span> de alcaldía de Concepción Copán.
-              </p>
-            </div>
           </motion.div>
         </Stagger>
 
@@ -182,6 +183,8 @@ export default function UnidadInfraestructuraPage() {
         </div>
 
       </div>
+
+      <ImageModal src={selectedImage} onClose={() => setSelectedImage(null)} />
     </div>
   );
 }

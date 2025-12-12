@@ -66,6 +66,7 @@ export function ResponsiveImage({
   loading = 'lazy',
   decoding = 'async',
   className = '',
+  fetchPriority,
   ...rest
 }: ResponsiveImageProps) {
   const [didError, setDidError] = useState(false);
@@ -161,6 +162,8 @@ export function ResponsiveImage({
         decoding={decoding}
         className={className}
         onError={handleError}
+        // @ts-expect-error - React expects lowercase fetchpriority for DOM, but types use camelCase
+        fetchpriority={fetchPriority}
         {...rest}
       />
     </picture>

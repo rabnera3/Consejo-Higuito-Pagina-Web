@@ -3,10 +3,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { fetchPlanificacionByEmployee } from '../../lib/api';
 import { EmployeeDashboard } from './EmployeeDashboard';
-import { TechnicianDashboard } from './TechnicianDashboard';
 import { NotificationsCard } from './NotificationsCard';
 
-type DashboardRole = 'gerente' | 'jefe' | 'tecnico' | 'empleado';
+type DashboardRole = 'gerente' | 'jefe' | 'empleado';
 
 type Action = {
   label: string;
@@ -40,11 +39,6 @@ const dashboards: Record<DashboardRole, DashboardDefinition> = {
       { label: 'Mi Perfil', href: '/portal/empleado', description: 'Actualiza datos y solicitudes' },
     ],
   },
-  tecnico: {
-    title: 'Panel de Campo',
-    description: 'Gestión de proyectos, estudios comunitarios y reportes de visita.',
-    actions: [], // Not used when TechnicianDashboard is rendered
-  },
   empleado: {
     title: 'Mi Espacio',
     description: 'Servicios personales, vacaciones, permisos y seguimiento de solicitudes.',
@@ -58,7 +52,12 @@ const dashboards: Record<DashboardRole, DashboardDefinition> = {
 export function PortalDashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const role = (user?.role as DashboardRole) || 'empleado';
+  const rawRole = (user?.role ?? 'empleado') as string;
+  const role: DashboardRole = rawRole === 'jefe' || rawRole === 'jefatura'
+    ? 'jefe'
+    : rawRole === 'gerente' || rawRole === 'gerencia'
+      ? 'gerente'
+      : 'empleado';
   const dashboard = useMemo(() => dashboards[role] || dashboards.empleado, [role]);
   const [showWarningModal, setShowWarningModal] = useState(false);
 
@@ -109,10 +108,6 @@ export function PortalDashboard() {
 
   if (role === 'empleado') {
     return <EmployeeDashboard />;
-  }
-
-  if (role === 'tecnico') {
-    return <TechnicianDashboard />;
   }
 
   return (

@@ -19,12 +19,6 @@ const quickLinks = [
     description: 'Visión ejecutiva con KPIs, aprob aciones y enlaces rápidos hacia reportes.',
     cta: 'Ver tablero',
   },
-  {
-    to: '/portal/tecnico',
-    title: 'Panel de Campo',
-    description: 'Reportes y bitácoras de campo',
-    cta: 'Ingresar',
-  },
 ];
 
 export function PortalQuickLinks() {

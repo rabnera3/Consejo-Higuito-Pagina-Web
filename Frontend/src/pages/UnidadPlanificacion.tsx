@@ -1,8 +1,9 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Target, CheckCircle2, Image as ImageIcon } from 'lucide-react';
 import { motion } from 'motion/react';
 import { FadeIn, Stagger, itemVariant } from '../components/figma/animations';
 import { ImageCarousel } from '../components/ImageCarousel';
+import { ImageModal } from '../components/ImageModal';
 
 import plan04 from '../img/unidades/planificacion/uni_plan_terr_04_1.webp';
 import plan07 from '../img/unidades/planificacion/uni_plan_terr_07_1.webp';
@@ -37,6 +38,8 @@ const responsabilidades = [
 ];
 
 export default function UnidadPlanificacionPage() {
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
   const galeriaLocales = useMemo(() => {
     const shuffled = [...galeriaBase];
     for (let i = shuffled.length - 1; i > 0; i -= 1) {
@@ -68,37 +71,35 @@ export default function UnidadPlanificacionPage() {
 
       {/* Contenido principal */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20 space-y-20">
-        
+
         {/* Imágenes destacadas */}
         <Stagger className="grid md:grid-cols-2 gap-8">
-          <motion.div variants={itemVariant} className="rounded-2xl overflow-hidden shadow-lg">
+          <motion.div
+            variants={itemVariant}
+            className="rounded-2xl overflow-hidden shadow-lg cursor-pointer group"
+            onClick={() => setSelectedImage(plan04)}
+          >
             <img
               src={plan04}
-              alt="Asesoria en planificacion territorial"
-              className="w-full h-[300px] object-cover"
+              alt="Asesoría en planificación territorial"
+              className="w-full h-[300px] object-cover transition-transform duration-500 group-hover:scale-110"
               loading="eager"
               decoding="async"
             />
-            <div className="bg-white p-4 border-t border-gray-200">
-              <p className="text-gray-700 text-sm leading-relaxed">
-                <span className="font-semibold">Planificacion territorial</span> para el desarrollo integral de municipios.
-              </p>
-            </div>
           </motion.div>
 
-          <motion.div variants={itemVariant} className="rounded-2xl overflow-hidden shadow-lg">
+          <motion.div
+            variants={itemVariant}
+            className="rounded-2xl overflow-hidden shadow-lg cursor-pointer group"
+            onClick={() => setSelectedImage(plan07)}
+          >
             <img
               src={plan07}
-              alt="Capacitacion en planificacion municipal"
-              className="w-full h-[300px] object-cover"
+              alt="Capacitación en planificación municipal"
+              className="w-full h-[300px] object-cover transition-transform duration-500 group-hover:scale-110"
               loading="lazy"
               decoding="async"
             />
-            <div className="bg-white p-4 border-t border-gray-200">
-              <p className="text-gray-700 text-sm leading-relaxed">
-                <span className="font-semibold">Capacitacion municipal</span> en metodologia de planificacion estrategica.
-              </p>
-            </div>
           </motion.div>
         </Stagger>
 
@@ -163,6 +164,8 @@ export default function UnidadPlanificacionPage() {
         </div>
 
       </div>
+
+      <ImageModal src={selectedImage} onClose={() => setSelectedImage(null)} />
     </div>
   );
 }

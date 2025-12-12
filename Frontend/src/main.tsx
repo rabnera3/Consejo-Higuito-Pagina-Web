@@ -16,6 +16,7 @@ const router = createBrowserRouter([
   }
 ], {
   future: {
+    // @ts-expect-error - v7_startTransition is required to silence warning but missing in types
     v7_startTransition: true,
     v7_relativeSplatPath: true,
     v7_fetcherPersist: true,

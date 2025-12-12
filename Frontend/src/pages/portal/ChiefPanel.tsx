@@ -20,12 +20,6 @@ const actions = [
     cta: 'Ver historial',
   },
   {
-    title: 'Seguimiento de campo',
-    description: 'Registra avances diarios y carga evidencias fotográficas.',
-    to: '/portal/tecnico',
-    cta: 'Abrir tablero',
-  },
-  {
     title: 'Mi directorio',
     description: 'Consulta teléfonos y roles de tu personal en segundos.',
     to: '/portal/directorio',

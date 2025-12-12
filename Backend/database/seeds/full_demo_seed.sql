@@ -67,7 +67,6 @@ SET @dept_seguridad := (SELECT id FROM departments WHERE name = 'Seguridad Alime
 SET @role_admin := (SELECT id FROM roles WHERE slug = 'admin' LIMIT 1);
 SET @role_gerente := (SELECT id FROM roles WHERE slug = 'gerente' LIMIT 1);
 SET @role_jefe := (SELECT id FROM roles WHERE slug = 'jefe' LIMIT 1);
-SET @role_tecnico := (SELECT id FROM roles WHERE slug = 'tecnico' LIMIT 1);
 SET @role_empleado := (SELECT id FROM roles WHERE slug = 'empleado' LIMIT 1);
 
 SET @demo_password := '$2y$10$NdDtHSDAukWB5.NJtgaIz.Uz9Pb4ypgfVb9slH6Q2u8K9AqkUvFxi';
@@ -80,7 +79,7 @@ INSERT INTO users (name, email, password_hash, role_id, department_id, status, c
     ('María Fernández', 'direccion@cih.hn', @demo_password, @role_admin, @dept_direccion, 'active', @now, @now),
     ('Luis Alvarado', 'gerente@cih.hn', @demo_password, @role_gerente, @dept_direccion, 'active', @now, @now),
     ('Karla Picado', 'jefe@cih.hn', @demo_password, @role_jefe, @dept_planificacion, 'active', @now, @now),
-    ('Bruno Salas', 'tecnico@cih.hn', @demo_password, @role_tecnico, @dept_ambiental, 'active', @now, @now),
+    ('Bruno Salas', 'tecnico@cih.hn', @demo_password, @role_empleado, @dept_ambiental, 'active', @now, @now),
     ('Ana Solano', 'empleado@cih.hn', @demo_password, @role_empleado, @dept_fortalecimiento, 'active', @now, @now);
 
 SET @user_admin := (SELECT id FROM users WHERE email = 'direccion@cih.hn' LIMIT 1);

@@ -28,7 +28,6 @@ try {
         ['slug' => 'admin', 'name' => 'Administrador'],
         ['slug' => 'gerente', 'name' => 'Gerente'],
         ['slug' => 'jefe', 'name' => 'Jefe de Unidad'],
-        ['slug' => 'tecnico', 'name' => 'Técnico'],
         ['slug' => 'empleado', 'name' => 'Empleado'],
     ];
     DB::table('roles')->insert($roles);
@@ -137,15 +136,12 @@ try {
         $jefeEmail = strtolower(str_replace(' ', '.', $jefeName)) . '@higuito.org';
         $jefeId = createEmployee($jefeName, $jefeEmail, 'jefe', $deptName, $roleIds, $deptIds, $password);
         
-        // Others are Tecnicos/Empleados
+        // Otros integrantes: empleado
         for ($i = 1; $i < count($titles); $i++) {
             $name = $titles[$i];
             $email = strtolower(str_replace(' ', '.', $name)) . '@higuito.org';
-            
-            // Alternate between 'tecnico' and 'empleado' roles for variety
-            $roleSlug = ($i % 2 == 0) ? 'empleado' : 'tecnico';
-            
-            $empId = createEmployee($name, $email, $roleSlug, $deptName, $roleIds, $deptIds, $password);
+
+            $empId = createEmployee($name, $email, 'empleado', $deptName, $roleIds, $deptIds, $password);
 
             // Add some planning for this employee
             $today = new DateTime();

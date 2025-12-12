@@ -1,8 +1,9 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Leaf, Target, CheckCircle2, Image as ImageIcon } from 'lucide-react';
 import { motion } from 'motion/react';
 import { FadeIn, Stagger, itemVariant } from '../components/figma/animations';
 import { ImageCarousel } from '../components/ImageCarousel';
+import { ImageModal } from '../components/ImageModal';
 
 import amb02 from '../img/unidades/ambiente/uni_rec_nat_02_1.webp';
 import amb05 from '../img/unidades/ambiente/uni_rec_nat_05_1.webp';
@@ -37,6 +38,8 @@ const responsabilidades = [
 ];
 
 export default function UnidadAmbientePage() {
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
   const galeriaLocales = useMemo(() => {
     const shuffled = [...galeriaBase];
     for (let i = shuffled.length - 1; i > 0; i -= 1) {
@@ -71,34 +74,32 @@ export default function UnidadAmbientePage() {
         
         {/* Imágenes destacadas */}
         <Stagger className="grid md:grid-cols-2 gap-8">
-          <motion.div variants={itemVariant} className="rounded-2xl overflow-hidden shadow-lg">
+          <motion.div 
+            variants={itemVariant} 
+            className="rounded-2xl overflow-hidden shadow-lg cursor-pointer group"
+            onClick={() => setSelectedImage(amb02)}
+          >
             <img
               src={amb02}
               alt="Levantamiento de información en ambiente"
-              className="w-full h-[300px] object-cover"
+              className="w-full h-[300px] object-cover transition-transform duration-500 group-hover:scale-110"
               loading="eager"
               decoding="async"
             />
-            <div className="bg-white p-4 border-t border-gray-200">
-              <p className="text-gray-700 text-sm leading-relaxed">
-                <span className="font-semibold">Gestión ambiental integral</span> en proyectos de desarrollo sostenible.
-              </p>
-            </div>
           </motion.div>
 
-          <motion.div variants={itemVariant} className="rounded-2xl overflow-hidden shadow-lg">
+          <motion.div 
+            variants={itemVariant} 
+            className="rounded-2xl overflow-hidden shadow-lg cursor-pointer group"
+            onClick={() => setSelectedImage(amb05)}
+          >
             <img
               src={amb05}
               alt="Inspección ambiental en campo"
-              className="w-full h-[300px] object-cover"
+              className="w-full h-[300px] object-cover transition-transform duration-500 group-hover:scale-110"
               loading="lazy"
               decoding="async"
             />
-            <div className="bg-white p-4 border-t border-gray-200">
-              <p className="text-gray-700 text-sm leading-relaxed">
-                <span className="font-semibold">Inspección y monitoreo</span> ambiental de proyectos en territorio.
-              </p>
-            </div>
           </motion.div>
         </Stagger>
 
@@ -176,4 +177,6 @@ export default function UnidadAmbientePage() {
       </div>
     </div>
   );
+
+      <ImageModal src={selectedImage} onClose={() => setSelectedImage(null)} />
 }

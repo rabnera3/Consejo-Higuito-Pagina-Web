@@ -104,6 +104,5 @@ INSERT INTO roles (slug, name) VALUES
     ('admin', 'Administrador'),
     ('gerente', 'Gerente'),
     ('jefe', 'Jefe de Unidad'),
-    ('tecnico', 'Técnico'),
     ('empleado', 'Empleado') AS new
 ON DUPLICATE KEY UPDATE name = new.name;

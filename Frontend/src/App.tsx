@@ -28,20 +28,12 @@ const PortalLoginPage = lazy(() => import('./pages/portal/Login'));
 const PortalAdminEmployeesPage = lazy(() => import('./pages/portal/AdminEmployees'));
 const PortalManagerPanelPage = lazy(() => import('./pages/portal/ManagerPanel'));
 const PortalChiefPanelPage = lazy(() => import('./pages/portal/ChiefPanel'));
-const PortalTechnicalPanelPage = lazy(() => import('./pages/portal/TechnicalPanel'));
 const PortalEmployeePanelPage = lazy(() => import('./pages/portal/EmployeePanel'));
 const PlanificacionPage = lazy(() => import('./pages/portal/Planificacion'));
-const SolicitudVacacionesPage = lazy(() => import('./pages/portal/SolicitudVacaciones'));
 const ActualizarDatosPage = lazy(() => import('./pages/portal/ActualizarDatos'));
-const FlujoAprobacionesPage = lazy(() => import('./pages/portal/FlujoAprobaciones'));
 const UnidadesPage = lazy(() => import('./pages/portal/Unidades'));
 const BlogNuevoPage = lazy(() => import('./pages/portal/BlogNuevo'));
 const BlogManagerPage = lazy(() => import('./pages/BlogManager'));
-const VisitReportsPage = lazy(() => import('./pages/portal/VisitReports'));
-const NewVisitReportPage = lazy(() => import('./pages/portal/NewVisitReport'));
-const EditVisitReportPage = lazy(() => import('./pages/portal/EditVisitReport'));
-const FieldLogsPage = lazy(() => import('./pages/portal/FieldLogs'));
-const NewFieldLogPage = lazy(() => import('./pages/portal/NewFieldLog'));
 const RequestsPage = lazy(() => import('./pages/portal/Requests'));
 const NewRequestPage = lazy(() => import('./pages/portal/NewRequest'));
 const PendingBlogsPage = lazy(() => import('./pages/portal/PendingBlogs'));
@@ -54,7 +46,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-white">
       {!isPortalRoute && !isLoginRoute && <Navbar />}
-      <main>
+      <main className="relative">
         <ScrollToTop />
         <Suspense fallback={<div className="py-10 text-center text-gray-600">Cargando…</div>}>
           <Routes>
@@ -82,20 +74,12 @@ export default function App() {
               <Route path="admin" element={<PortalAdminEmployeesPage />} />
               <Route path="gerencia" element={<PortalManagerPanelPage />} />
               <Route path="jefatura" element={<PortalChiefPanelPage />} />
-              <Route path="tecnico" element={<PortalTechnicalPanelPage />} />
               <Route path="empleado" element={<PortalEmployeePanelPage />} />
               <Route path="planificacion" element={<PlanificacionPage />} />
-              <Route path="solicitud-vacaciones" element={<SolicitudVacacionesPage />} />
               <Route path="actualizar-datos" element={<ActualizarDatosPage />} />
-              <Route path="flujo-aprobaciones" element={<FlujoAprobacionesPage />} />
               <Route path="unidades" element={<UnidadesPage />} />
               <Route path="blog-nuevo" element={<BlogNuevoPage />} />
               <Route path="blog-manager" element={<BlogManagerPage />} />
-              <Route path="reportes-visita" element={<VisitReportsPage />} />
-              <Route path="reportes-visita/nuevo" element={<NewVisitReportPage />} />
-              <Route path="reportes-visita/editar/:id" element={<EditVisitReportPage />} />
-              <Route path="bitacora-campo" element={<FieldLogsPage />} />
-              <Route path="bitacora-campo/nuevo" element={<NewFieldLogPage />} />
               <Route path="solicitudes" element={<RequestsPage />} />
               <Route path="solicitudes/nueva" element={<NewRequestPage />} />
               <Route path="blog-pendientes" element={<PendingBlogsPage />} />
