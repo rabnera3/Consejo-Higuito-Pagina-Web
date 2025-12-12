@@ -1,6 +1,7 @@
-import { useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { useMemo, useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { fetchPlanificacionByEmployee } from '../../lib/api';
 import { EmployeeDashboard } from './EmployeeDashboard';
 import { TechnicianDashboard } from './TechnicianDashboard';
 import { NotificationsCard } from './NotificationsCard';
@@ -56,8 +57,55 @@ const dashboards: Record<DashboardRole, DashboardDefinition> = {
 
 export function PortalDashboard() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const role = (user?.role as DashboardRole) || 'empleado';
   const dashboard = useMemo(() => dashboards[role] || dashboards.empleado, [role]);
+  const [showWarningModal, setShowWarningModal] = useState(false);
+
+  useEffect(() => {
+    if (role === 'gerente') return;
+    if (!user?.employee_id) return;
+
+    const checkPlanning = async () => {
+      const now = new Date();
+      const day = now.getDay(); // 0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat
+
+      // Wednesday (3)
+      if (day === 3) {
+        try {
+          const resp = await fetchPlanificacionByEmployee(Number(user.employee_id));
+          if (resp.success && Array.isArray(resp.data)) {
+             // Calculate current week range (Monday to Friday)
+             const d = new Date();
+             const dayNum = d.getDay() || 7;
+             d.setHours(0,0,0,0);
+             d.setDate(d.getDate() + 4 - dayNum);
+             const weekStart = new Date(d);
+             weekStart.setDate(weekStart.getDate() - 3); // Monday
+             const weekEnd = new Date(d);
+             weekEnd.setDate(weekEnd.getDate() + 1); // Friday
+
+             const currentWeekPlans = resp.data.filter((p: any) => {
+                const pDate = new Date(p.fecha);
+                return pDate >= weekStart && pDate <= weekEnd;
+             });
+
+             // Assuming 5 days needed
+             if (currentWeekPlans.length < 5) {
+                setShowWarningModal(true);
+             }
+          }
+        } catch (e) {
+          console.error("Error checking planning", e);
+        }
+      } else if (day === 4 || day === 5) {
+         // Thursday (4) or Friday (5)
+         navigate('/portal/planificacion', { state: { warning: 'Pronto se cerrará esta planificación semanal.', forced: true } });
+      }
+    };
+    
+    checkPlanning();
+  }, [user, role, navigate]);
 
   if (role === 'empleado') {
     return <EmployeeDashboard />;
@@ -104,6 +152,26 @@ export function PortalDashboard() {
           </div>
         )}
       </div>
+
+      {showWarningModal && (
+        <div className="cih-modal-overlay">
+          <div className="cih-modal-box" style={{ maxWidth: '450px' }}>
+            <div className="cih-modal-header">
+              <h3>Recordatorio de Planificación</h3>
+              <button className="cih-btn-close" onClick={() => setShowWarningModal(false)}>&times;</button>
+            </div>
+            <div className="cih-modal-body">
+              <p style={{ margin: 0, color: '#64748b', lineHeight: 1.5 }}>
+                Faltan solo 3 días para llenar la planificación de esta semana. Por favor completa tu agenda.
+              </p>
+            </div>
+            <div className="cih-modal-footer">
+              <button className="cih-btn cih-btn--ghost" onClick={() => setShowWarningModal(false)}>Entendido</button>
+              <button className="cih-btn cih-btn--primary" onClick={() => navigate('/portal/planificacion')}>Ir a planificación</button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

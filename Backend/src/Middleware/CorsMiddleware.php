@@ -26,16 +26,22 @@ final class CorsMiddleware implements MiddlewareInterface
     private function addCorsHeaders(ResponseInterface $response, ServerRequestInterface $request): ResponseInterface
     {
         $origin = $request->getHeaderLine('Origin');
-
-        // For development, allow all origins or reflect the request origin
         $allowOrigin = $origin ?: '*';
 
-        return $response
+        $requestHeaders = $request->getHeaderLine('Access-Control-Request-Headers');
+        $allowHeaders = $requestHeaders ?: 'X-Requested-With, Content-Type, Accept, Origin, Authorization';
+
+        $response = $response
             ->withHeader('Access-Control-Allow-Origin', $allowOrigin)
-            ->withHeader('Access-Control-Allow-Credentials', 'true')
-            ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+            ->withHeader('Access-Control-Allow-Headers', $allowHeaders)
             ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS')
-            ->withHeader('Access-Control-Max-Age', '600')
+            ->withHeader('Access-Control-Max-Age', '86400')
             ->withHeader('Vary', 'Origin');
+
+        if ($allowOrigin !== '*') {
+            $response = $response->withHeader('Access-Control-Allow-Credentials', 'true');
+        }
+
+        return $response;
     }
 }

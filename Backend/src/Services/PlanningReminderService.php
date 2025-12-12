@@ -19,6 +19,12 @@ class PlanningReminderService
         }
 
         $userId = $user['id'];
+        $employeeId = $user['employee_id'] ?? null;
+
+        if (!$employeeId) {
+            file_put_contents(__DIR__ . '/../../debug_manual.log', date('Y-m-d H:i:s') . " PlanningReminder: No employee_id for user {$user['email']}\n", FILE_APPEND);
+            return;
+        }
 
         $today = new \DateTime();
         
@@ -45,7 +51,7 @@ class PlanningReminderService
         // Let's use DB::table('planificacion') for safety.
         
         $existingPlans = DB::table('planificacion_semanal')
-            ->where('empleado_id', $userId)
+            ->where('empleado_id', $employeeId)
             ->whereIn('fecha', $weekDates)
             ->pluck('fecha')
             ->toArray();

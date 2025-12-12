@@ -35,11 +35,18 @@ export default function NewRequestPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (!window.confirm('¿Está seguro que desea enviar esta solicitud?')) {
+            return;
+        }
+
         setLoading(true);
         setError('');
 
         try {
             let finalDescription = formData.description;
+            let startDate = undefined;
+            let endDate = undefined;
 
             if (requiresDateRange(formData.type as RequestEntry['type'])) {
                 if (!formData.startDate || !formData.endDate) {
@@ -47,7 +54,11 @@ export default function NewRequestPage() {
                     setLoading(false);
                     return;
                 }
-                finalDescription = `Desde: ${formData.startDate} Hasta: ${formData.endDate}. Motivo: ${formData.reason || formData.description}`;
+                // Keep description clean, but we can still append context if needed.
+                // For now, let's just use the description field for the "Reason/Motivo"
+                finalDescription = formData.reason || formData.description;
+                startDate = formData.startDate;
+                endDate = formData.endDate;
             } else {
                 if (!formData.description) {
                     setError('Por favor describa su solicitud');
@@ -59,11 +70,14 @@ export default function NewRequestPage() {
             const payload = {
                 type: formData.type as RequestEntry['type'],
                 description: finalDescription,
+                start_date: startDate,
+                end_date: endDate
             };
 
             const response = await createRequest(payload);
 
             if (response.success) {
+                alert('Solicitud enviada exitosamente.');
                 navigate('/portal/solicitudes');
             } else {
                 setError('Error al crear la solicitud');

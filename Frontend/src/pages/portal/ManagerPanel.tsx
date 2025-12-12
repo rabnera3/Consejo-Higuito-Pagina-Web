@@ -7,12 +7,9 @@ import {
   fetchEmployees,
   fetchPendingRequestsForManager,
   fetchPlanificacion,
-  fetchApprovedRequestsHistory,
   isApiHalted,
   resetApiFailureState,
 } from '../../lib/api';
-
-type HistoryRange = '7' | '30' | '90' | '365';
 
 export default function PortalManagerPanelPage() {
   const [requestsPreview, setRequestsPreview] = useState<RequestEntry[]>([]);
@@ -25,10 +22,6 @@ export default function PortalManagerPanelPage() {
   });
   const [requestsError, setRequestsError] = useState('');
   const [planError, setPlanError] = useState('');
-  const [historyEntries, setHistoryEntries] = useState<RequestEntry[]>([]);
-  const [historyRange, setHistoryRange] = useState<HistoryRange>('30');
-  const [historyLoading, setHistoryLoading] = useState(false);
-  const [historyError, setHistoryError] = useState('');
   const [lastUpdated, setLastUpdated] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -140,39 +133,6 @@ export default function PortalManagerPanelPage() {
     resetApiFailureState();
     loadPanelData();
   };
-
-  const computeDateRange = (range: string) => {
-    const end = new Date();
-    const start = new Date();
-    start.setDate(start.getDate() - Number(range) + 1);
-    const toISO = (date: Date) => date.toISOString().slice(0, 10);
-    return { start: toISO(start), end: toISO(end) };
-  };
-
-  const loadHistory = useCallback(async (range: HistoryRange) => {
-    setHistoryLoading(true);
-    setHistoryError('');
-    try {
-      const { start, end } = computeDateRange(range);
-      const resp = await fetchApprovedRequestsHistory({ start, end });
-      if (resp.success) {
-        const data = Array.isArray(resp.data) ? resp.data : resp.data ? [resp.data] : [];
-        setHistoryEntries(data);
-      } else {
-        setHistoryEntries([]);
-        setHistoryError(resp.message || 'No se pudo obtener el historial.');
-      }
-    } catch (err: any) {
-      setHistoryEntries([]);
-      setHistoryError(err?.message || 'No se pudo obtener el historial.');
-    } finally {
-      setHistoryLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    loadHistory(historyRange);
-  }, [historyRange, loadHistory]);
 
   const formattedUpdatedAt = lastUpdated
     ? new Intl.DateTimeFormat('es-CR', { hour: '2-digit', minute: '2-digit' }).format(new Date(lastUpdated))
@@ -334,72 +294,6 @@ export default function PortalManagerPanelPage() {
                 </div>
               )}
             </div>
-          </div>
-        </div>
-
-        <div className="cih-card" style={{ marginTop: '1.5rem' }}>
-          <div className="cih-card__body">
-            <div className="cih-card__header" style={{ alignItems: 'flex-start' }}>
-              <div>
-                <h3 className="cih-card__title">Solicitudes aprobadas</h3>
-                <p className="cih-card__subtitle">Resumen de solicitudes ya autorizadas por gerencia dentro del rango elegido.</p>
-              </div>
-              <label className="cih-helper" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                Mostrar últimos
-                <select
-                  value={historyRange}
-                  onChange={(e) => setHistoryRange(e.target.value as HistoryRange)}
-                  className="form-control"
-                  style={{ width: '140px' }}
-                >
-                  <option value="7">7 días</option>
-                  <option value="30">30 días</option>
-                  <option value="90">90 días</option>
-                  <option value="365">12 meses</option>
-                </select>
-              </label>
-            </div>
-
-            {historyError && !historyLoading && (
-              <div className="cih-alert cih-alert--error" role="alert" style={{ marginBottom: '0.75rem' }}>
-                {historyError}
-              </div>
-            )}
-
-            {historyLoading && <p className="cih-helper">Cargando historial…</p>}
-            {!historyLoading && !historyEntries.length && !historyError && (
-              <p className="cih-empty">No hay aprobaciones registradas en este periodo.</p>
-            )}
-
-            {historyEntries.length > 0 && (
-              <div className="cih-table-wrap">
-                <table className="cih-table">
-                  <thead>
-                    <tr>
-                      <th>Fecha</th>
-                      <th>Colaborador</th>
-                      <th>Tipo</th>
-                      <th>Descripción</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {historyEntries.map((entry) => (
-                      <tr key={`${entry.id}-${entry.updated_at}`}
-                      >
-                        <td data-label="Fecha">
-                          {new Intl.DateTimeFormat('es-CR', { dateStyle: 'medium' }).format(new Date(entry.updated_at ?? entry.created_at))}
-                        </td>
-                        <td data-label="Colaborador">{entry.employee?.full_name || '—'}</td>
-                        <td data-label="Tipo">{describeType(entry.type)}</td>
-                        <td data-label="Descripción">
-                          <p style={{ margin: 0 }}>{entry.description}</p>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
           </div>
         </div>
 

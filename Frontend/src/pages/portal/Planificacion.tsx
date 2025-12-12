@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { useLocation, useBlocker } from 'react-router-dom';
 import {
   fetchPlanificacion,
   createPlanificacion,
@@ -9,6 +10,16 @@ import {
 } from '../../lib/api';
 import WeeklyPlanView from '../../components/portal/WeeklyPlanView';
 import PlanDetailsModal from '../../components/portal/PlanDetailsModal';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '../../components/ui/alert-dialog';
 
 const formatIsoDate = (date: Date) => {
   const year = date.getFullYear();
@@ -38,6 +49,7 @@ const toLocalDate = (value: string) => new Date(`${value}T00:00:00`);
 
 export default function PlanificacionPage() {
   const { user } = useAuth();
+  const location = useLocation();
   const employeeId = user?.employee_id ?? null;
   const [plans, setPlans] = useState<PlanificacionEntry[]>([]);
   const [filteredPlans, setFilteredPlans] = useState<PlanificacionEntry[]>([]);
@@ -48,6 +60,39 @@ export default function PlanificacionPage() {
   const [weekEnd, setWeekEnd] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [warningMessage, setWarningMessage] = useState('');
+  const [isForced, setIsForced] = useState(false);
+  const [currentWeekPendingCount, setCurrentWeekPendingCount] = useState(0);
+
+  useEffect(() => {
+    if (location.state?.forced) {
+      setIsForced(true);
+    }
+  }, [location]);
+
+  useEffect(() => {
+    if (!employeeId) return;
+    
+    const today = new Date();
+    const currentWeekDates = getWorkWeekDates(today);
+    const myPlans = plans.filter((p) => p.empleado_id === employeeId);
+    const filledDates = new Set(myPlans.map((p) => p.fecha));
+    const pending = currentWeekDates.filter((d) => !filledDates.has(d));
+    
+    setCurrentWeekPendingCount(pending.length);
+  }, [plans, employeeId]);
+
+  const blocker = useBlocker(
+    ({ currentLocation, nextLocation }) =>
+      isForced && currentWeekPendingCount > 0 && currentLocation.pathname !== nextLocation.pathname
+  );
+
+  useEffect(() => {
+    if (location.state?.warning) {
+      setWarningMessage(location.state.warning);
+      window.history.replaceState({}, document.title);
+    }
+  }, [location]);
   const [selectedPlan, setSelectedPlan] = useState<PlanificacionEntry | null>(null);
   const [pendingDates, setPendingDates] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -248,6 +293,10 @@ export default function PlanificacionPage() {
   };
 
   const handleEdit = (plan: PlanificacionEntry) => {
+    if (plan.empleado_id !== employeeId) {
+      alert('No puedes editar la planificación de otro empleado.');
+      return;
+    }
     setFormData({
       empleado_id: plan.empleado_id,
       fecha: plan.fecha,
@@ -331,6 +380,16 @@ export default function PlanificacionPage() {
 
   return (
     <div className="cih-section-stack">
+      {warningMessage && (
+        <div className="card" style={{ borderLeft: '4px solid #ef4444', background: '#fef2f2', marginBottom: '1rem' }}>
+          <div className="body" style={{ padding: '1rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <span style={{ fontSize: '1.25rem' }}>🚨</span>
+              <p style={{ margin: 0, color: '#991b1b', fontWeight: 500 }}>{warningMessage}</p>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Alerta de días pendientes */}
       {pendingDates.length > 0 && user?.role !== 'gerente' && (
         <div className="card" style={{ borderLeft: '4px solid #fbbf24', background: '#fff9f0' }}>
@@ -546,13 +605,15 @@ export default function PlanificacionPage() {
           >
             Mis Planes
           </button>
-          <button
-            className={`segment-btn ${filterMode === 'unit' ? 'active' : ''}`}
-            onClick={() => setFilterMode('unit')}
-            title="Ver planes de mi unidad"
-          >
-            Mi Unidad
-          </button>
+          {user?.role !== 'gerente' && user?.role !== 'gerencia' && (
+            <button
+              className={`segment-btn ${filterMode === 'unit' ? 'active' : ''}`}
+              onClick={() => setFilterMode('unit')}
+              title="Ver planes de mi unidad"
+            >
+              Mi Unidad
+            </button>
+          )}
         </div>
 
         <div style={{ display: 'flex', gap: '0.5rem', flex: 1, minWidth: '200px' }}>
@@ -703,7 +764,7 @@ export default function PlanificacionPage() {
                             </div>
                           </td>
                           <td data-label="Acciones" className="text-right" onClick={(e) => e.stopPropagation()}>
-                            {(employeeId === plan.empleado_id || user?.role === 'gerente') && (
+                            {(employeeId === plan.empleado_id) && (
                               <div style={{ display: 'flex', gap: '0.25rem', justifyContent: 'flex-end' }}>
                                 <button
                                   className="btn sm"
@@ -760,8 +821,30 @@ export default function PlanificacionPage() {
           onClose={() => setSelectedPlan(null)}
           onEdit={handleEdit}
           onDelete={handleDelete}
-          canEdit={employeeId === selectedPlan.empleado_id || user?.role === 'gerente'}
+          canEdit={employeeId === selectedPlan.empleado_id}
         />
+      )}
+
+      {blocker.state === "blocked" && (
+        <AlertDialog open={true}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Planificación Incompleta</AlertDialogTitle>
+              <AlertDialogDescription>
+                Aún tienes días sin planificar ({currentWeekPendingCount} días) en la semana actual. 
+                Como es jueves o viernes, es obligatorio completar la planificación antes de salir.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={() => blocker.reset()}>
+                Permanecer
+              </AlertDialogCancel>
+              <AlertDialogAction onClick={() => blocker.proceed()}>
+                Salir de todos modos
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       )}
 
       <style>{`

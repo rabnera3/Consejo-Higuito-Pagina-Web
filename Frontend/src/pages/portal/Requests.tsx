@@ -256,6 +256,9 @@ export default function RequestsPage() {
     const showActions = activeTab === 'approvals' && !!approvalScope;
 
     const headerSubtitle = (() => {
+        if (showMyRequestsTab && !canViewUnit && !approvalScope) {
+            return 'Historial y estado de mis solicitudes personales.';
+        }
         if (showMyRequestsTab) {
             return 'Crea, consulta y aprueba solicitudes desde un solo lugar.';
         }
@@ -421,8 +424,15 @@ export default function RequestsPage() {
                                                     <td data-label="Tipo">{describeType(request.type)}</td>
                                                     <td data-label="Descripción">
                                                         <p style={{ margin: 0 }}>{request.description}</p>
+                                                        {request.start_date && request.end_date && (
+                                                            <div style={{ fontSize: '0.85em', color: '#64748b', marginTop: '0.25rem' }}>
+                                                                📅 {request.start_date} al {request.end_date}
+                                                            </div>
+                                                        )}
                                                         {request.rejection_reason && (
-                                                            <small style={{ color: '#b91c1c' }}>Motivo rechazo: {request.rejection_reason}</small>
+                                                            <small style={{ color: '#b91c1c', display: 'block', marginTop: '0.25rem' }}>
+                                                                Motivo rechazo: {request.rejection_reason}
+                                                            </small>
                                                         )}
                                                     </td>
                                                     <td data-label="Estado">{getStatusBadge(request.status)}</td>

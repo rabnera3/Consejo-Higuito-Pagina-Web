@@ -12,6 +12,8 @@ class Request extends Model
         'employee_id',
         'type',
         'description',
+        'start_date',
+        'end_date',
         'status',
         'rejection_reason',
     ];

@@ -20,13 +20,6 @@ type EmployeeRecord = {
 
 type FilterOption = { value: string; label: string };
 
-const statusOrder: Record<string, number> = {
-  Activa: 1,
-  Vacaciones: 2,
-  Licencia: 3,
-  Baja: 4,
-};
-
 const normalizeOptionList = (items: Array<any> | undefined, prefix: string): FilterOption[] => {
   if (!Array.isArray(items)) {
     return [];
@@ -100,6 +93,7 @@ export default function PortalAdminEmployeesPage() {
   const [departmentFilter, setDepartmentFilter] = useState<string>('todos');
   const [statusFilter, setStatusFilter] = useState<string>('todos');
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeRecord | null>(null);
+  const [employeeToCommunicate, setEmployeeToCommunicate] = useState<EmployeeRecord | null>(null);
   const [actionStatus, setActionStatus] = useState<{ type: 'success' | 'info'; message: string } | null>(null);
   const [remoteEmployees, setRemoteEmployees] = useState<EmployeeRecord[]>([]);
   const [filterOptions, setFilterOptions] = useState<{ departamentos: FilterOption[]; estados: FilterOption[] }>({ departamentos: [], estados: [] });
@@ -219,10 +213,6 @@ export default function PortalAdminEmployeesPage() {
       .slice(0, 6);
   }, [remoteEmployees]);
 
-  const topStates = Object.entries(summary.porEstado)
-    .sort((a, b) => (statusOrder[a[0]] || 99) - (statusOrder[b[0]] || 99))
-    .slice(0, 4);
-
   const vacationTeam = useMemo(() => {
     const dataset = filtersActive ? filteredEmployees : remoteEmployees;
     return dataset
@@ -257,19 +247,6 @@ export default function PortalAdminEmployeesPage() {
       })
       .sort((a, b) => a.daysUntil - b.daysUntil)
       .slice(0, 4);
-  }, [filteredEmployees, filtersActive, remoteEmployees]);
-
-  const distributionByDepartment = useMemo(() => {
-    const dataset = filtersActive ? filteredEmployees : remoteEmployees;
-    return Object.entries(
-      dataset.reduce<Record<string, number>>((acc, employee) => {
-        const key = employee.departamento || 'Sin unidad';
-        acc[key] = (acc[key] || 0) + 1;
-        return acc;
-      }, {}),
-    )
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 5);
   }, [filteredEmployees, filtersActive, remoteEmployees]);
 
   const showActionStatus = (type: 'success' | 'info', message: string) => {
@@ -317,15 +294,17 @@ export default function PortalAdminEmployeesPage() {
 
   const handleViewEmployee = (employee: EmployeeRecord) => {
     setSelectedEmployee(employee);
-    showActionStatus('info', `Detalle abierto para ${employee.nombre}.`);
   };
 
-  const handleUpdateEmployee = (employee: EmployeeRecord) => {
-    showActionStatus('success', `${employee.nombre} marcado para seguimiento.`);
+  const handleCommunicateEmployee = (employee: EmployeeRecord) => {
+    setEmployeeToCommunicate(employee);
   };
 
-  const handleViewBoard = () => {
-    showActionStatus('info', 'Pronto abriremos el tablero consolidado desde aquí.');
+  const executeCommunication = () => {
+    if (!employeeToCommunicate) return;
+    showActionStatus('success', `Notificación de sistema y correo enviados a ${employeeToCommunicate.nombre}.`);
+    setEmployeeToCommunicate(null);
+    setSelectedEmployee(null);
   };
 
   const handleRetry = () => {
@@ -341,6 +320,7 @@ export default function PortalAdminEmployeesPage() {
   };
 
   return (
+    <>
     <section className="cih-card" aria-labelledby="portal-admin-title">
       <div className="cih-card__body">
         <h2 className="cih-card__title" id="portal-admin-title">Administración de empleados</h2>
@@ -427,7 +407,7 @@ export default function PortalAdminEmployeesPage() {
                     ? filteredEmployees.length
                       ? `${filteredEmployees.length} registros coinciden con la búsqueda.`
                       : 'Sin coincidencias, ajusta los filtros para ver datos.'
-                    : 'Mostrando universo completo (sin filtros activos).'}
+                    : `Total: ${remoteEmployees.length} colaboradores.`}
             </p>
           </div>
         </div>
@@ -447,7 +427,62 @@ export default function PortalAdminEmployeesPage() {
           </div>
         )}
 
-        <div className="cih-kpi-grid">
+        <div className="cih-card" style={{ marginTop: '1.5rem' }}>
+          <div className="cih-card__body">
+            <div className="cih-card__header">
+              <div>
+                <h3 className="cih-card__title">Detalle operativo</h3>
+                <p className="cih-card__subtitle">Resultados listos para validar antes de enviarlos a Recursos Humanos.</p>
+              </div>
+                <button className="cih-btn cih-btn--primary" type="button" onClick={handleExportSelection}>Exportar selección</button>
+            </div>
+            {filteredEmployees.length ? (
+              <div className="cih-table-wrap">
+                <table className="cih-table">
+                  <thead>
+                    <tr>
+                      <th>Nombre</th>
+                      <th>Rol</th>
+                      <th>Unidad</th>
+                      <th>Municipio</th>
+                      <th>Estado</th>
+                      <th>Ingreso</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredEmployees.map((employee) => (
+                      <tr key={employee.id}>
+                        <td data-label="Nombre">{employee.nombre}</td>
+                        <td data-label="Rol">{employee.rol || 'N/D'}</td>
+                        <td data-label="Unidad">{employee.departamento || 'Sin unidad'}</td>
+                        <td data-label="Municipio">{employee.municipio || 'Sin municipio'}</td>
+                        <td data-label="Estado">
+                          <span className={`cih-badge ${(employee.estado || 'Activa') === 'Activa' ? 'cih-badge--success' : 'cih-badge--warning'}`}>
+                            {employee.estado || 'Sin estado'}
+                          </span>
+                        </td>
+                        <td data-label="Ingreso">{formatDate(employee.fechaIngreso)}</td>
+                        <td data-label="Acciones" className="cih-text-right">
+                          <div className="actions-row">
+                            <button className="cih-btn cih-btn--ghost" type="button" onClick={() => handleCommunicateEmployee(employee)}>Comunicar</button>
+                            <button className="cih-btn" type="button" onClick={() => handleViewEmployee(employee)}>Ver detalle</button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <p className="cih-empty">No hay coincidencias con los filtros aplicados.</p>
+            )}
+          </div>
+        </div>
+
+
+
+        <div className="cih-kpi-grid" style={{ marginTop: '1.5rem' }}>
           <div className="cih-kpi">
             <p className="cih-kpi__label">Colaboradores totales</p>
             <p className="cih-kpi__value">{summary.total}</p>
@@ -480,7 +515,7 @@ export default function PortalAdminEmployeesPage() {
           </div>
         </div>
 
-        <div className="cih-section-grid">
+        <div className="cih-section-grid" style={{ marginTop: '1.5rem' }}>
           <div className="cih-card">
             <div className="cih-card__body">
               <div className="cih-card__header">
@@ -525,27 +560,6 @@ export default function PortalAdminEmployeesPage() {
 
           <div className="cih-card">
             <div className="cih-card__body">
-              <h3 className="cih-card__title">Estado del personal</h3>
-              <p className="cih-card__subtitle">Distribución rápida por situación laboral.</p>
-              <ul className="cih-list">
-                {topStates.map(([estado, count]) => (
-                  <li key={estado} className="cih-list__item">
-                    <div>
-                      <strong>{estado}</strong>
-                      <p className="cih-helper">{estado === 'Activa' ? 'Disponible' : 'Seguimiento'}</p>
-                    </div>
-                    <span className="cih-chip">{count}</span>
-                  </li>
-                ))}
-              </ul>
-              <button className="cih-btn cih-btn--primary" type="button" onClick={handleViewBoard}>Ver tablero completo</button>
-            </div>
-          </div>
-        </div>
-
-        <div className="cih-section-grid">
-          <div className="cih-card">
-            <div className="cih-card__body">
               <h3 className="cih-card__title">Equipo en vacaciones / licencias</h3>
               <p className="cih-card__subtitle">Personas fuera de oficina según el filtro aplicado.</p>
               {vacationTeam.length ? (
@@ -568,152 +582,207 @@ export default function PortalAdminEmployeesPage() {
               )}
             </div>
           </div>
-
-          <div className="cih-card">
-            <div className="cih-card__body">
-              <h3 className="cih-card__title">Próximos cumpleaños</h3>
-              <p className="cih-card__subtitle">Celebra al personal que está por cumplir años.</p>
-              {upcomingBirthdays.length ? (
-                <ul className="cih-list">
-                  {upcomingBirthdays.map((item) => (
-                    <li key={item.id} className="cih-list__item">
-                      <div>
-                        <strong>{item.nombre}</strong>
-                        <p className="cih-helper">{item.departamento || 'Sin unidad'}</p>
-                      </div>
-                      <div className="cih-text-right">
-                        <span className="cih-chip">{item.daysUntil} días</span>
-                        <p className="cih-helper">Cumple {item.nextDate} · {item.turning} años</p>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="cih-empty">Sin cumpleaños cercanos con los filtros aplicados.</p>
-              )}
-            </div>
-          </div>
         </div>
 
         <div className="cih-card" style={{ marginTop: '1.5rem' }}>
           <div className="cih-card__body">
-            <div className="cih-card__header">
-              <div>
-                <h3 className="cih-card__title">Detalle operativo</h3>
-                <p className="cih-card__subtitle">Resultados listos para validar antes de enviarlos a Recursos Humanos.</p>
-              </div>
-                <button className="cih-btn cih-btn--primary" type="button" onClick={handleExportSelection}>Exportar selección</button>
-            </div>
-            {filteredEmployees.length ? (
-              <div className="cih-table-wrap">
-                <table className="cih-table">
-                  <thead>
-                    <tr>
-                      <th>Nombre</th>
-                      <th>Rol</th>
-                      <th>Unidad</th>
-                      <th>Municipio</th>
-                      <th>Estado</th>
-                      <th>Ingreso</th>
-                      <th>Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredEmployees.map((employee) => (
-                      <tr key={employee.id}>
-                        <td data-label="Nombre">{employee.nombre}</td>
-                        <td data-label="Rol">{employee.rol || 'N/D'}</td>
-                        <td data-label="Unidad">{employee.departamento || 'Sin unidad'}</td>
-                        <td data-label="Municipio">{employee.municipio || 'Sin municipio'}</td>
-                        <td data-label="Estado">
-                          <span className={`cih-badge ${(employee.estado || 'Activa') === 'Activa' ? 'cih-badge--success' : 'cih-badge--warning'}`}>
-                            {employee.estado || 'Sin estado'}
-                          </span>
-                        </td>
-                        <td data-label="Ingreso">{formatDate(employee.fechaIngreso)}</td>
-                        <td data-label="Acciones" className="cih-text-right">
-                          <div className="actions-row">
-                            <button className="cih-btn cih-btn--ghost" type="button" onClick={() => handleUpdateEmployee(employee)}>Actualizar</button>
-                            <button className="cih-btn" type="button" onClick={() => handleViewEmployee(employee)}>Ver detalle</button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <p className="cih-empty">No hay coincidencias con los filtros aplicados.</p>
-            )}
-          </div>
-        </div>
-
-        {selectedEmployee && (
-          <div className="cih-card" style={{ marginTop: '1.25rem' }}>
-            <div className="cih-card__body">
-              <div className="cih-card__header">
-                <div>
-                  <h3 className="cih-card__title">Detalle seleccionado</h3>
-                  <p className="cih-card__subtitle">Resumen rápido para acciones manuales.</p>
-                </div>
-                <button className="cih-btn cih-btn--ghost" type="button" onClick={() => setSelectedEmployee(null)}>Cerrar</button>
-              </div>
-              <div className="cih-table-wrap">
-                <table className="cih-table">
-                  <tbody>
-                    <tr>
-                      <th>Nombre</th>
-                      <td>{selectedEmployee.nombre}</td>
-                    </tr>
-                    <tr>
-                      <th>Correo</th>
-                      <td>{selectedEmployee.email || 'N/D'}</td>
-                    </tr>
-                    <tr>
-                      <th>Rol</th>
-                      <td>{selectedEmployee.rol || 'N/D'}</td>
-                    </tr>
-                    <tr>
-                      <th>Unidad / Municipio</th>
-                      <td>{(selectedEmployee.departamento || 'Sin unidad')} · {(selectedEmployee.municipio || 'Sin municipio')}</td>
-                    </tr>
-                    <tr>
-                      <th>Estado</th>
-                      <td>{selectedEmployee.estado || 'Sin estado'}</td>
-                    </tr>
-                    <tr>
-                      <th>Ingreso</th>
-                      <td>{formatDate(selectedEmployee.fechaIngreso)}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        )}
-
-        <div className="cih-card" style={{ marginTop: '1.5rem' }}>
-          <div className="cih-card__body">
-            <h3 className="cih-card__title">Distribución por unidad</h3>
-            <p className="cih-card__subtitle">Top de áreas con mayor dotación según el filtro.</p>
-            <ul className="cih-list">
-              {distributionByDepartment.map(([area, count]) => {
-                const baseTotal = filtersActive ? filteredEmployees.length : remoteEmployees.length;
-                const percentage = baseTotal ? ((count / baseTotal) * 100).toFixed(0) : '0';
-                return (
-                  <li key={area} className="cih-list__item">
+            <h3 className="cih-card__title">Próximos cumpleaños</h3>
+            <p className="cih-card__subtitle">Celebra al personal que está por cumplir años.</p>
+            {upcomingBirthdays.length ? (
+              <ul className="cih-list">
+                {upcomingBirthdays.map((item) => (
+                  <li key={item.id} className="cih-list__item">
                     <div>
-                      <strong>{area}</strong>
-                      <p className="cih-helper">{count} colaboradores</p>
+                      <strong>{item.nombre}</strong>
+                      <p className="cih-helper">{item.departamento || 'Sin unidad'}</p>
                     </div>
-                    <span className="cih-chip">{percentage}%</span>
+                    <div className="cih-text-right">
+                      <span className="cih-chip">{item.daysUntil} días</span>
+                      <p className="cih-helper">Cumple {item.nextDate} · {item.turning} años</p>
+                    </div>
                   </li>
-                );
-              })}
-            </ul>
+                ))}
+              </ul>
+            ) : (
+              <p className="cih-empty">Sin cumpleaños cercanos con los filtros aplicados.</p>
+            )}
           </div>
         </div>
       </div>
     </section>
+
+    {selectedEmployee && (
+      <div className="cih-modal-overlay" onClick={() => setSelectedEmployee(null)}>
+        <div className="cih-modal-box" onClick={(e) => e.stopPropagation()}>
+          <div className="cih-modal-header">
+            <h3>Detalle del Colaborador</h3>
+            <button className="cih-btn-close" onClick={() => setSelectedEmployee(null)}>&times;</button>
+          </div>
+          <div className="cih-modal-body">
+            <div className="detail-grid">
+              <div className="detail-item full-width">
+                <label>Nombre Completo</label>
+                <p style={{ fontSize: '1.1rem', fontWeight: 500 }}>{selectedEmployee.nombre}</p>
+              </div>
+              <div className="detail-item">
+                <label>Correo Electrónico</label>
+                <p>{selectedEmployee.email || 'N/D'}</p>
+              </div>
+              <div className="detail-item">
+                <label>Rol / Cargo</label>
+                <p>{selectedEmployee.rol || 'N/D'}</p>
+              </div>
+              <div className="detail-item">
+                <label>Unidad</label>
+                <p>{selectedEmployee.departamento || 'Sin unidad'}</p>
+              </div>
+              <div className="detail-item">
+                <label>Municipio</label>
+                <p>{selectedEmployee.municipio || 'Sin municipio'}</p>
+              </div>
+              <div className="detail-item">
+                <label>Estado Actual</label>
+                <span className={`cih-badge ${(selectedEmployee.estado || 'Activa') === 'Activa' ? 'cih-badge--success' : 'cih-badge--warning'}`} style={{ width: 'fit-content' }}>
+                  {selectedEmployee.estado || 'Sin estado'}
+                </span>
+              </div>
+              <div className="detail-item">
+                <label>Fecha de Ingreso</label>
+                <p>{formatDate(selectedEmployee.fechaIngreso)}</p>
+              </div>
+            </div>
+          </div>
+          <div className="cih-modal-footer">
+            <button className="cih-btn cih-btn--ghost" type="button" onClick={() => setSelectedEmployee(null)}>Cerrar</button>
+            <button className="cih-btn cih-btn--primary" type="button" onClick={() => handleCommunicateEmployee(selectedEmployee)}>Comunicar</button>
+          </div>
+        </div>
+      </div>
+    )}
+
+    {employeeToCommunicate && (
+      <div className="cih-modal-overlay" onClick={() => setEmployeeToCommunicate(null)}>
+        <div className="cih-modal-box" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '400px' }}>
+          <div className="cih-modal-header">
+            <h3>Confirmar Comunicación</h3>
+            <button className="cih-btn-close" onClick={() => setEmployeeToCommunicate(null)}>&times;</button>
+          </div>
+          <div className="cih-modal-body">
+            <p style={{ margin: 0, color: '#64748b', lineHeight: 1.5 }}>
+              ¿Estás seguro de enviar una notificación de sistema y un correo electrónico a <strong>{employeeToCommunicate.nombre}</strong>?
+            </p>
+          </div>
+          <div className="cih-modal-footer">
+            <button className="cih-btn cih-btn--ghost" type="button" onClick={() => setEmployeeToCommunicate(null)}>Cancelar</button>
+            <button className="cih-btn cih-btn--primary" type="button" onClick={executeCommunication}>Sí, enviar</button>
+          </div>
+        </div>
+      </div>
+    )}
+
+    <style>{`
+      .cih-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.85);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        backdrop-filter: blur(4px);
+      }
+      .cih-modal-box {
+        background-color: #ffffff !important;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 600px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        animation: modal-in 0.2s ease-out;
+        position: relative;
+        z-index: 10000;
+        border: 1px solid #e2e8f0;
+      }
+      @keyframes modal-in {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+      }
+      .cih-modal-header {
+        padding: 1.25rem;
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #ffffff;
+        border-radius: 12px 12px 0 0;
+      }
+      .cih-modal-header h3 {
+        margin: 0;
+        font-size: 1.25rem;
+        color: #1e293b;
+        font-weight: 600;
+      }
+      .cih-btn-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        line-height: 1;
+        color: #64748b;
+        cursor: pointer;
+        padding: 0.25rem;
+      }
+      .cih-btn-close:hover {
+        color: #0f172a;
+      }
+      .cih-modal-body {
+        padding: 1.5rem;
+        background-color: #ffffff;
+      }
+      .detail-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+      }
+      .detail-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+      .detail-item.full-width {
+        grid-column: 1 / -1;
+      }
+      .detail-item label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #64748b;
+        font-weight: 600;
+      }
+      .detail-item p {
+        margin: 0;
+        color: #0f172a;
+        font-size: 0.95rem;
+      }
+      .cih-modal-footer {
+        padding: 1.25rem;
+        border-top: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+        background-color: #f8fafc;
+        border-radius: 0 0 12px 12px;
+      }
+      @media (max-width: 640px) {
+        .detail-grid {
+          grid-template-columns: 1fr;
+          gap: 1rem;
+        }
+      }
+    `}</style>
+    </>
   );
 }

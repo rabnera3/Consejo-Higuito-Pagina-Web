@@ -9,6 +9,7 @@ use App\Controllers\Api\PlanificacionController;
 use App\Controllers\Api\NotificationController;
 use App\Controllers\Api\RequestsController;
 use App\Controllers\Api\FieldController;
+use App\Controllers\Api\CronController;
 use App\Middleware\CorsMiddleware;
 use App\Middleware\OptionalAuthMiddleware;
 use App\Middleware\RequireAuthMiddleware;
@@ -26,6 +27,7 @@ return static function (App $app): void {
     $notificationController = new NotificationController();
     $requestsController = new RequestsController();
     $fieldController = new FieldController();
+    $cronController = new CronController();
 
     // Root endpoint to advertise API
     $app->get('/', function ($request, $response) {
@@ -51,9 +53,10 @@ return static function (App $app): void {
     });
 
     // API group (CORS ahora es global)
-    $app->group('/api', function ($group) use ($authController, $blogController, $employeesController, $planificacionController, $notificationController, $requestsController, $fieldController, $requireAuth, $optionalAuth, $app) {
+    $app->group('/api', function ($group) use ($authController, $blogController, $employeesController, $planificacionController, $notificationController, $requestsController, $fieldController, $cronController, $requireAuth, $optionalAuth, $app) {
         // Public routes
         $group->post('/auth/login', [$authController, 'login']);
+        $group->post('/cron/close-planning', [$cronController, 'closeWeeklyPlanning']);
 
         // Blog public routes (leer posts publicados)
         $group->get('/blog', [$blogController, 'index'])->add($optionalAuth);
@@ -90,7 +93,6 @@ return static function (App $app): void {
             $protected->post('/notifications/{id}/read', [$notificationController, 'markAsRead']);
             $protected->post('/notifications/read-all', [$notificationController, 'markAllAsRead']);
             $protected->delete('/notifications/delete-all', [$notificationController, 'deleteAll']);
-
 
             // Field routes
             $protected->get('/visit-reports', [$fieldController, 'listVisitReports']);

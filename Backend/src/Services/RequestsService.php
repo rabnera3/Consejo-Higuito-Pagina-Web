@@ -15,6 +15,8 @@ class RequestsService
             'employee_id' => $data['employee_id'],
             'type' => $data['type'],
             'description' => $data['description'],
+            'start_date' => $data['start_date'] ?? null,
+            'end_date' => $data['end_date'] ?? null,
             'status' => 'pending_approval', // Initial status: Waiting for Chief
         ]);
 
@@ -70,6 +72,11 @@ class RequestsService
         $request->status = 'pending_authorization';
         $request->save();
 
+        // Remove pending notifications for chief
+        Notification::where('type', 'request_created')
+            ->whereJsonContains('data->request_id', $requestId)
+            ->delete();
+
         // Notify Manager
         $this->notifyManager($request);
         // Notify Employee
@@ -80,13 +87,38 @@ class RequestsService
 
     public function approveByManager(int $requestId): bool
     {
-        $request = Request::find($requestId);
+        $request = Request::with('employee')->find($requestId);
         if (!$request || $request->status !== 'pending_authorization') {
             return false;
         }
 
+        // Calculate and deduct vacation days
+        if ($request->type === 'vacaciones' && $request->start_date && $request->end_date) {
+            $start = Carbon::parse($request->start_date);
+            $end = Carbon::parse($request->end_date);
+            
+            // Calculate business days (excluding weekends)
+            $days = 0;
+            $period = \Carbon\CarbonPeriod::create($start, $end);
+            foreach ($period as $date) {
+                if (!$date->isWeekend()) {
+                    $days++;
+                }
+            }
+            
+            if ($request->employee) {
+                $request->employee->vacation_days_balance -= $days;
+                $request->employee->save();
+            }
+        }
+
         $request->status = 'approved';
         $request->save();
+
+        // Remove pending notifications for managers
+        Notification::where('type', 'request_pending_auth')
+            ->whereJsonContains('data->request_id', $requestId)
+            ->delete();
 
         // Notify Administración (informativo)
         $this->notifyAdmin($request);
@@ -101,6 +133,17 @@ class RequestsService
         $request = Request::find($requestId);
         if (!$request) {
             return false;
+        }
+
+        // Remove pending notifications based on current status
+        if ($request->status === 'pending_approval') {
+            Notification::where('type', 'request_created')
+                ->whereJsonContains('data->request_id', $requestId)
+                ->delete();
+        } elseif ($request->status === 'pending_authorization') {
+            Notification::where('type', 'request_pending_auth')
+                ->whereJsonContains('data->request_id', $requestId)
+                ->delete();
         }
 
         $request->status = 'rejected';

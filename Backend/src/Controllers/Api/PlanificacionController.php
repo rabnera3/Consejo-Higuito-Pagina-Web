@@ -14,6 +14,8 @@ class PlanificacionController
     public function index(Request $request, Response $response): Response
     {
         try {
+            file_put_contents(__DIR__ . '/../../debug_manual.log', date('Y-m-d H:i:s') . " PlanificacionController: index called\n", FILE_APPEND);
+
             $plans = DB::table('planificacion_semanal as p')
                 ->leftJoin('employees as e', 'p.empleado_id', '=', 'e.id')
                 ->leftJoin('departments as d', 'e.department_id', '=', 'd.id')
@@ -21,10 +23,16 @@ class PlanificacionController
                 ->orderBy('p.fecha', 'DESC')
                 ->get();
 
+            file_put_contents(__DIR__ . '/../../debug_manual.log', date('Y-m-d H:i:s') . " PlanificacionController: Found " . count($plans) . " plans\n", FILE_APPEND);
+
             // Check for missing planning days and notify
             $user = $request->getAttribute('user');
             if ($user) {
-                (new PlanningReminderService())->checkAndNotify($user);
+                try {
+                    (new PlanningReminderService())->checkAndNotify($user);
+                } catch (\Throwable $e) {
+                    file_put_contents(__DIR__ . '/../../debug_manual.log', date('Y-m-d H:i:s') . " PlanificacionController: Reminder Error: " . $e->getMessage() . "\n", FILE_APPEND);
+                }
             }
 
             $response->getBody()->write(json_encode([
@@ -33,7 +41,9 @@ class PlanificacionController
             ]));
 
             return $response->withHeader('Content-Type', 'application/json');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
+            file_put_contents(__DIR__ . '/../../debug_manual.log', date('Y-m-d H:i:s') . " PlanificacionController: Error: " . $e->getMessage() . "\n", FILE_APPEND);
+            
             $response->getBody()->write(json_encode([
                 'success' => false,
                 'message' => 'Error al obtener planificación: ' . $e->getMessage()
@@ -104,6 +114,27 @@ class PlanificacionController
         try {
             $id = $args['id'];
             $data = $request->getParsedBody();
+            $user = $request->getAttribute('user');
+            $requesterEmployeeId = is_array($user) ? ($user['employee_id'] ?? null) : ($user->employee_id ?? null);
+
+            $currentPlan = DB::table('planificacion_semanal')->where('id', $id)->first();
+
+            if (!$currentPlan) {
+                $response->getBody()->write(json_encode([
+                    'success' => false,
+                    'message' => 'Planificación no encontrada.'
+                ]));
+                return $response->withStatus(404)->withHeader('Content-Type', 'application/json');
+            }
+
+            // Strict check: Only the owner can edit
+            if (!$requesterEmployeeId || $currentPlan->empleado_id != $requesterEmployeeId) {
+                $response->getBody()->write(json_encode([
+                    'success' => false,
+                    'message' => 'No tienes permiso para editar esta planificación.'
+                ]));
+                return $response->withStatus(403)->withHeader('Content-Type', 'application/json');
+            }
 
             // Validar si ya existe planificación para este empleado en esta fecha (excluyendo el actual)
             $exists = DB::table('planificacion_semanal')
@@ -160,6 +191,27 @@ class PlanificacionController
     {
         try {
             $id = $args['id'];
+            $user = $request->getAttribute('user');
+            $requesterEmployeeId = is_array($user) ? ($user['employee_id'] ?? null) : ($user->employee_id ?? null);
+
+            $currentPlan = DB::table('planificacion_semanal')->where('id', $id)->first();
+
+            if (!$currentPlan) {
+                $response->getBody()->write(json_encode([
+                    'success' => false,
+                    'message' => 'Planificación no encontrada.'
+                ]));
+                return $response->withStatus(404)->withHeader('Content-Type', 'application/json');
+            }
+
+            // Strict check: Only the owner can delete
+            if (!$requesterEmployeeId || $currentPlan->empleado_id != $requesterEmployeeId) {
+                $response->getBody()->write(json_encode([
+                    'success' => false,
+                    'message' => 'No tienes permiso para eliminar esta planificación.'
+                ]));
+                return $response->withStatus(403)->withHeader('Content-Type', 'application/json');
+            }
 
             DB::table('planificacion_semanal')
                 ->where('id', $id)

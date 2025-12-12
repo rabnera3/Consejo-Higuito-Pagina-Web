@@ -359,6 +359,8 @@ export interface RequestEntry {
   employee_id: number;
   type: 'vacaciones' | 'permiso' | 'insumos' | 'vehiculo' | 'otro';
   description: string;
+  start_date?: string;
+  end_date?: string;
   status: 'pending_approval' | 'pending_authorization' | 'pending_admin' | 'approved' | 'rejected';
   rejection_reason?: string;
   created_at: string;
@@ -375,7 +377,7 @@ export interface RequestResponse {
   message?: string;
 }
 
-export function createRequest(data: { type: RequestEntry['type']; description: string }) {
+export function createRequest(data: { type: RequestEntry['type']; description: string; start_date?: string; end_date?: string }) {
   return apiRequest<{ success: boolean; data: RequestEntry }>('POST', '/api/requests', data);
 }
 
