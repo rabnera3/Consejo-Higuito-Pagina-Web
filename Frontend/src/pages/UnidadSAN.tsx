@@ -5,13 +5,13 @@ import { FadeIn, Stagger, itemVariant } from '../components/figma/animations';
 import { ImageCarousel } from '../components/ImageCarousel';
 import { ImageModal } from '../components/ImageModal';
 
-import san1 from '../img/unidades/san/gallery_unidad-san_1.webp';
-import san11 from '../img/unidades/san/gallery_unidad-san_11_1.webp';
-import san12 from '../img/unidades/san/gallery_unidad-san_12_1.webp';
-import san14 from '../img/unidades/san/gallery_unidad-san_14_1.webp';
-import san15 from '../img/unidades/san/gallery_unidad-san_15_1.webp';
-import san17 from '../img/unidades/san/gallery_unidad-san_17_1.webp';
-import san19 from '../img/unidades/san/gallery_unidad-san_19.webp';
+import san1 from '../img/unidades/san/gallery_unidad-san_1.avif';
+import san11 from '../img/unidades/san/gallery_unidad-san_11_1.avif';
+import san12 from '../img/unidades/san/gallery_unidad-san_12_1.avif';
+import san14 from '../img/unidades/san/gallery_unidad-san_14_1.avif';
+import san15 from '../img/unidades/san/gallery_unidad-san_15_1.avif';
+import san17 from '../img/unidades/san/gallery_unidad-san_17_1.avif';
+import san19 from '../img/unidades/san/gallery_unidad-san_19.avif';
 
 const objetivosEspecificos = [
   'Coordinar con las unidades municipales para promover sistemas alimentarios sostenibles que mejoren la productividad, disponibilidad, acceso y diversificación de alimentos en los municipios a través de la extensión agrícola y nutricional, principalmente en las familias en condición de inseguridad alimentaria y nutricional.',

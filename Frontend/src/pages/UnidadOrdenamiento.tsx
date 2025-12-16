@@ -5,15 +5,15 @@ import { FadeIn, Stagger, itemVariant } from '../components/figma/animations';
 import { ImageCarousel } from '../components/ImageCarousel';
 import { ImageModal } from '../components/ImageModal';
 
-import ord13 from '../img/unidades/ordenamiento/uni_orde_terr_13_1.webp';
-import ord15 from '../img/unidades/ordenamiento/uni_orde_terr_15_1.webp';
-import ord17 from '../img/unidades/ordenamiento/uni_orde_terr_17.webp';
-import ord22 from '../img/unidades/ordenamiento/uni_orde_terr_22_1.webp';
-import ord23 from '../img/unidades/ordenamiento/uni_orde_terr_23_1.webp';
-import ord24 from '../img/unidades/ordenamiento/uni_orde_terr_24_1.webp';
-import ord27 from '../img/unidades/ordenamiento/uni_orde_terr_27_1.webp';
-import ord28 from '../img/unidades/ordenamiento/uni_orde_terr_28_1.webp';
-import ord30 from '../img/unidades/ordenamiento/uni_orde_terr_30_1.webp';
+import ord13 from '../img/unidades/ordenamiento/uni_orde_terr_13_1.avif';
+import ord15 from '../img/unidades/ordenamiento/uni_orde_terr_15_1.avif';
+import ord17 from '../img/unidades/ordenamiento/uni_orde_terr_17.avif';
+import ord22 from '../img/unidades/ordenamiento/uni_orde_terr_22_1.avif';
+import ord23 from '../img/unidades/ordenamiento/uni_orde_terr_23_1.avif';
+import ord24 from '../img/unidades/ordenamiento/uni_orde_terr_24_1.avif';
+import ord27 from '../img/unidades/ordenamiento/uni_orde_terr_27_1.avif';
+import ord28 from '../img/unidades/ordenamiento/uni_orde_terr_28_1.avif';
+import ord30 from '../img/unidades/ordenamiento/uni_orde_terr_30_1.avif';
 
 const galeriaBase = [
   { src: ord13, alt: 'Personal de catastro realizando levantamiento de información de campo, Trinidad Copán' },

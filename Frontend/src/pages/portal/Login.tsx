@@ -3,7 +3,7 @@ import { Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import '../../styles/portal.css';
-import logo from '../../img/logo01.webp';
+import logo from '../../img/logo01.avif';
 
 export default function PortalLoginPage() {
   const [error, setError] = useState('');

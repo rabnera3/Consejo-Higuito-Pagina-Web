@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { ResponsiveImage } from './ResponsiveImage';
-import logoImg from '../img/logo01.webp';
+import logoImg from '../img/logo01.avif';
 
 interface NodeBoxProps {
   children: ReactNode;

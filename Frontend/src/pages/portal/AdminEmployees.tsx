@@ -253,43 +253,35 @@ export default function PortalAdminEmployeesPage() {
     setActionStatus({ type, message });
   };
 
-  const buildCsvFile = (data: EmployeeRecord[], filename: string) => {
+  const buildXlsxFile = async (data: EmployeeRecord[], filename: string) => {
     if (!data.length) {
       showActionStatus('info', 'No hay registros para exportar con la selección actual.');
       return;
     }
+    const XLSX = await import('xlsx');
     const headers = ['Nombre', 'Correo', 'Rol', 'Unidad', 'Municipio', 'Estado', 'Ingreso'];
-    const rows = data.map((employee) => [
-      employee.nombre || '',
-      employee.email || '',
-      employee.rol || '',
-      employee.departamento || '',
-      employee.municipio || '',
-      employee.estado || '',
-      formatDate(employee.fechaIngreso),
-    ]);
-    const escapeField = (value: string) => `"${value.replace(/"/g, '""')}"`;
-    const csvContent = [headers, ...rows]
-      .map((row) => row.map((field) => escapeField(String(field))).join(','))
-      .join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', filename);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    const rows = data.map((employee) => ({
+      Nombre: employee.nombre || '',
+      Correo: employee.email || '',
+      Rol: employee.rol || '',
+      Unidad: employee.departamento || '',
+      Municipio: employee.municipio || '',
+      Estado: employee.estado || '',
+      Ingreso: formatDate(employee.fechaIngreso),
+    }));
+    const worksheet = XLSX.utils.json_to_sheet(rows, { header: headers });
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Empleados');
+    XLSX.writeFile(workbook, filename);
     showActionStatus('success', `Descarga generada (${data.length} registros).`);
   };
 
   const handleExportMovements = () => {
-    buildCsvFile(recentMovements, 'movimientos-recientes.csv');
+    buildXlsxFile(recentMovements, 'movimientos-recientes.xlsx');
   };
 
   const handleExportSelection = () => {
-    buildCsvFile(filteredEmployees, 'empleados-filtrados.csv');
+    buildXlsxFile(filteredEmployees, 'empleados-filtrados.xlsx');
   };
 
   const handleViewEmployee = (employee: EmployeeRecord) => {

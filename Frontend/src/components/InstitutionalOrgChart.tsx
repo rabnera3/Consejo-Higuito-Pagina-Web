@@ -1,6 +1,6 @@
 import { ResponsiveImage } from './ResponsiveImage';
 import { Download, ExternalLink, Info } from 'lucide-react';
-import organigramaImage from '../img/organigrama.webp';
+import organigramaImage from '../img/organigrama.avif';
 
 export function InstitutionalOrgChart() {
   return (
@@ -24,7 +24,7 @@ export function InstitutionalOrgChart() {
           </a>
           <a
             href={organigramaImage}
-            download="organigrama-cih.webp"
+            download="organigrama-cih.avif"
             className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 transition hover:border-slate-300"
           >
             <Download className="h-3.5 w-3.5" />

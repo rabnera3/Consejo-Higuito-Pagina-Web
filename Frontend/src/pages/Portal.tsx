@@ -32,12 +32,12 @@ export default function PortalLayout() {
   const [showMissingDataAlert, setShowMissingDataAlert] = useState(false);
 
   const roleAllowedMap: Record<string, string[]> = {
-    admin: ['dashboard', 'admin', 'directorio', 'planificacion', 'solicitudes', 'blog-manager', 'blog-nuevo', 'blog-pendientes', 'empleado'],
-    gerente: ['dashboard', 'gerencia', 'admin', 'directorio', 'planificacion', 'solicitudes', 'blog-manager', 'blog-nuevo', 'blog-pendientes', 'empleado'],
-    gerencia: ['dashboard', 'gerencia', 'admin', 'directorio', 'planificacion', 'solicitudes', 'blog-manager', 'blog-nuevo', 'blog-pendientes', 'empleado'],
-    jefe: ['dashboard', 'jefatura', 'directorio', 'empleado', 'planificacion', 'solicitudes', 'blog-manager', 'blog-nuevo'],
-    jefatura: ['dashboard', 'jefatura', 'directorio', 'empleado', 'planificacion', 'solicitudes', 'blog-manager', 'blog-nuevo'],
-    empleado: ['dashboard', 'empleado', 'directorio', 'planificacion', 'solicitudes'],
+    admin: ['dashboard', 'admin', 'directorio', 'planificacion', 'solicitudes', 'blog-manager', 'blog-nuevo', 'blog-pendientes', 'empleado', 'actualizar-datos', 'unidades'],
+    gerente: ['dashboard', 'gerencia', 'admin', 'directorio', 'planificacion', 'solicitudes', 'blog-manager', 'blog-nuevo', 'blog-pendientes', 'empleado', 'actualizar-datos', 'unidades'],
+    gerencia: ['dashboard', 'gerencia', 'admin', 'directorio', 'planificacion', 'solicitudes', 'blog-manager', 'blog-nuevo', 'blog-pendientes', 'empleado', 'actualizar-datos', 'unidades'],
+    jefe: ['dashboard', 'jefatura', 'directorio', 'empleado', 'planificacion', 'solicitudes', 'blog-manager', 'blog-nuevo', 'actualizar-datos', 'unidades'],
+    jefatura: ['dashboard', 'jefatura', 'directorio', 'empleado', 'planificacion', 'solicitudes', 'blog-manager', 'blog-nuevo', 'actualizar-datos', 'unidades'],
+    empleado: ['dashboard', 'empleado', 'directorio', 'planificacion', 'solicitudes', 'actualizar-datos'],
   };
   const allowedSegments = roleAllowedMap[user?.role ?? ''] ?? roleAllowedMap.empleado;
 

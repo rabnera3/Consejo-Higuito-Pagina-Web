@@ -1,4 +1,4 @@
-import logo from '../img/logo01.webp'
+import logo from '../img/logo01.avif'
 
 export function Footer() {
   const year = new Date().getFullYear()

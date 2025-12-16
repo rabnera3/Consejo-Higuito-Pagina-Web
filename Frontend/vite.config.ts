@@ -8,6 +8,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  assetsInclude: ['**/*.avif'],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -34,6 +35,9 @@ export default defineConfig({
             }
             if (id.includes('@radix-ui')) {
               return 'vendor-radix'
+            }
+            if (id.includes('xlsx')) {
+              return 'vendor-xlsx'
             }
             return 'vendor'
           }

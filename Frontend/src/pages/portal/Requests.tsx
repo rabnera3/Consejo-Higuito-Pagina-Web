@@ -269,12 +269,10 @@ export default function RequestsPage() {
             return 'Da seguimiento a las solicitudes creadas por tu unidad.';
         }
         if (isAdmin) {
-            return 'Administración recibe notificaciones automáticas cuando gerencia finaliza las solicitudes.';
+            return 'Gestión y seguimiento de solicitudes del personal.';
         }
         return 'Consulta el estado de las solicitudes disponibles.';
     })();
-
-    const showAdminNotice = isAdmin && !approvalScope && !showMyRequestsTab && !canViewUnit;
 
     return (
         <section className="cih-card" aria-labelledby="requests-title">
@@ -290,12 +288,6 @@ export default function RequestsPage() {
                         </Link>
                     )}
                 </header>
-
-                {showAdminNotice && (
-                    <div className="cih-alert" role="status" style={{ marginBottom: '1rem' }}>
-                        Administración solo recibe alertas informativas; no se requieren aprobaciones manuales.
-                    </div>
-                )}
 
                 {isAdmin && (
                     <div className="cih-card" style={{ marginBottom: '1.25rem' }}>

@@ -4,9 +4,10 @@ const ERROR_IMG_SRC = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODgiIGhlaWdodD0
 
 export interface ResponsiveImageProps extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'src' | 'srcSet'> {
   /**
-   * Image filename or path
-   * Can be just filename like 'aboutus1.webp' or path like '../img/aboutus1'
-   * Component will automatically strip extension and serve .avif, .webp, .jpg
+   * Image source - can be:
+   * - A Vite-imported image (processed URL like /assets/image-hash.avif)
+   * - A filename like 'aboutus1.avif'
+   * - A path like '../img/aboutus1.avif'
    */
   src: string;
   /**
@@ -24,39 +25,9 @@ export interface ResponsiveImageProps extends Omit<React.ImgHTMLAttributes<HTMLI
 /**
  * ResponsiveImage Component
  * 
- * Automatically serves:
- * - AVIF for modern browsers (best compression)
- * - WebP as fallback (good compression)
- * - Original format (JPG/PNG) as last fallback
- * 
- * Supports responsive images with srcSet for different screen sizes
- * 
- * @example
- * // Simple usage - just filename
- * <ResponsiveImage
- *   src="aboutus1.webp"
- *   alt="About us 1"
- *   className="w-full h-auto"
- * />
- * 
- * // Or with path
- * <ResponsiveImage
- *   src="../img/aboutus1.webp"
- *   alt="About us 1"
- * />
- * 
- * @example
- * // With responsive sizes
- * <ResponsiveImage
- *   src="aboutus1.webp"
- *   srcSet={{
- *     480: 'aboutus1-sm',   // 480px width version
- *     768: 'aboutus1-md',   // 768px width version
- *     1280: 'aboutus1-lg'   // 1280px width version
- *   }}
- *   sizes="(max-width: 640px) 480px, (max-width: 1024px) 768px, 1280px"
- *   alt="About us 1"
- * />
+ * Handles both Vite-processed URLs and static paths.
+ * For Vite imports, uses the image directly.
+ * For static paths, creates picture element with AVIF format.
  */
 export function ResponsiveImage({
   src,
@@ -70,25 +41,6 @@ export function ResponsiveImage({
   ...rest
 }: ResponsiveImageProps) {
   const [didError, setDidError] = useState(false);
-
-  // Extract filename from Vite-processed URL (e.g., /assets/image-hash.webp -> image)
-  const getFilenameBase = (url: string): string => {
-    const match = url.match(/\/([^/]+)-[a-zA-Z0-9]+\.(webp|jpg|jpeg|png|gif)$/i);
-    if (match) return match[1]; // Returns "carrusel1" from "carrusel1-hash.webp"
-    // Fallback: just remove extension
-    return url.replace(/\.(webp|jpg|jpeg|png|gif)$/i, '');
-  };
-
-  // Check if this is a Vite asset URL
-  const isViteAsset = src.includes('/assets/');
-  
-  // For Vite assets, construct public folder paths
-  // For other paths, use the src as-is
-  const srcBase = isViteAsset ? `/img/${getFilenameBase(src)}` : src.replace(/\.(webp|jpg|jpeg|png|gif)$/i, '');
-  
-  // Determine original extension
-  const extMatch = src.match(/\.(webp|jpg|jpeg|png|gif)$/i);
-  const ext = extMatch ? extMatch[1].toLowerCase() : 'jpg';
 
   const handleError = () => {
     setDidError(true);
@@ -112,6 +64,30 @@ export function ResponsiveImage({
     );
   }
 
+  // Check if this is already a Vite-processed asset URL
+  // These contain /assets/ or have a hash pattern like image-AbCdEf12.avif
+  const isProcessedUrl = src.includes('/assets/') || /[-_][a-zA-Z0-9]{8,}\.(avif|webp|jpg|jpeg|png|gif)$/i.test(src);
+  
+  // If it's already a processed URL from Vite import, use it directly
+  if (isProcessedUrl) {
+    return (
+      <img
+        src={src}
+        alt={alt}
+        loading={loading}
+        decoding={decoding}
+        className={className}
+        onError={handleError}
+        // @ts-expect-error - React expects lowercase fetchpriority for DOM, but types use camelCase
+        fetchpriority={fetchPriority}
+        {...rest}
+      />
+    );
+  }
+
+  // For non-processed URLs, strip extension and build picture element
+  const srcBase = src.replace(/\.(avif|webp|jpg|jpeg|png|gif)$/i, '');
+
   // Build srcSet with AVIF support
   const buildSrcSet = (base: string): string => {
     return `${base}.avif 1x`;
@@ -128,31 +104,19 @@ export function ResponsiveImage({
 
   return (
     <picture>
-      {/* AVIF format - best compression */}
+      {/* AVIF format */}
       <source
         srcSet={buildResponsiveSrcSet()}
         sizes={sizes}
         type="image/avif"
       />
 
-      {/* WebP format - good compression */}
-      <source
-        srcSet={srcSet
-          ? Object.entries(srcSet)
-            .map(([width, path]) => `${path}.webp ${width}w`)
-            .join(', ')
-          : `${srcBase}.webp 1x`
-        }
-        sizes={sizes}
-        type="image/webp"
-      />
-
-      {/* Original format as fallback */}
+      {/* Fallback img with AVIF */}
       <img
-        src={`${srcBase}.${ext}`}
+        src={`${srcBase}.avif`}
         srcSet={srcSet
           ? Object.entries(srcSet)
-            .map(([width, path]) => `${path}.${ext} ${width}w`)
+            .map(([width, path]) => `${path}.avif ${width}w`)
             .join(', ')
           : undefined
         }

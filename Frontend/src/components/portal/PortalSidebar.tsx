@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { API_BASE, fetchPlanificacionByEmployee } from '../../lib/api';
 import { NotificationCenter } from './NotificationCenter';
 
-const logo = new URL('../../img/logo01.webp', import.meta.url).href;
+const logo = new URL('../../img/logo01.avif', import.meta.url).href;
 
 interface MenuItem {
   label: string;

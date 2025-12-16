@@ -43,7 +43,7 @@ export function WelcomeSection() {
             >
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
               <ResponsiveImage
-                src={new URL('../img/bienvenida.webp', import.meta.url).href}
+                src={new URL('../img/bienvenida.avif', import.meta.url).href}
                 alt="Community members working in agriculture"
                 sizes="(max-width: 640px) 480px, (max-width: 1024px) 768px, 600px"
                 className="w-full h-full object-cover"

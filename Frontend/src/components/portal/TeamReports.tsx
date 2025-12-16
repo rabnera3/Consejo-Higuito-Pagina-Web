@@ -25,28 +25,20 @@ export function TeamReports() {
         }
     };
 
-    const downloadCSV = () => {
-        const headers = ['Fecha', 'Empleado', 'Lugar', 'Sector', 'Actividad', 'Duración'];
-        const csvContent = [
-            headers.join(','),
-            ...plans.map(p => [
-                p.fecha,
-                `"${p.empleado_nombre}"`,
-                `"${p.lugar}"`,
-                `"${p.sector_trabajo}"`,
-                `"${p.descripcion}"`,
-                `"${p.duracion}"`
-            ].join(','))
-        ].join('\n');
-
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.setAttribute('href', url);
-        link.setAttribute('download', `reporte_equipo_${new Date().toISOString().split('T')[0]}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+    const downloadXLSX = async () => {
+        const XLSX = await import('xlsx');
+        const rows = plans.map(p => ({
+            Fecha: p.fecha,
+            Empleado: p.empleado_nombre,
+            Lugar: p.lugar,
+            Sector: p.sector_trabajo,
+            Actividad: p.descripcion,
+            Duración: p.duracion
+        }));
+        const worksheet = XLSX.utils.json_to_sheet(rows);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Reporte');
+        XLSX.writeFile(workbook, `reporte_equipo_${new Date().toISOString().split('T')[0]}.xlsx`);
     };
 
     if (loading) return <div className="p-4 text-center text-gray-500">Cargando reportes...</div>;
@@ -61,10 +53,10 @@ export function TeamReports() {
                         <p className="cih-card__subtitle">Historial de actividades planificadas por el equipo.</p>
                     </div>
                     <button
-                        onClick={downloadCSV}
+                        onClick={downloadXLSX}
                         className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm font-medium flex items-center gap-2"
                     >
-                        <span>📥</span> Descargar CSV
+                        <span>📥</span> Descargar Excel
                     </button>
                 </div>
 
