@@ -5,22 +5,19 @@ Monorepo con:
 - **Frontend**: React + TypeScript + Vite (sitio público + portal interno).
 - **Backend**: PHP (Slim) + MariaDB/MySQL (API + autenticación por sesión).
 
-Guía de uso del portal: ver [GUIA_USUARIO_PORTAL.md](GUIA_USUARIO_PORTAL.md).
-
 ---
 
 ## Estructura
 
 - `Frontend/`: SPA (público + `/portal/*`).
 - `Backend/`: API y servicios (`/api/*`).
-- `imagenes_consejohiguito/`: repositorio de imágenes fuente.
 
 ---
 
 ## Requisitos
 
 - Node.js 18+
-- PHP 7.4+ (recomendado 8.x)
+- PHP 8.x (recomendado 8.1+)
 - Composer 2
 - MariaDB/MySQL 10+
 
@@ -30,18 +27,15 @@ Guía de uso del portal: ver [GUIA_USUARIO_PORTAL.md](GUIA_USUARIO_PORTAL.md).
 
 ### 1) Base de datos
 
-Opción A (fresh install “todo en uno”):
+Ejecutar el archivo de estructura completo:
 
-- Ejecutar: `Backend/database/migrations/000_full_schema.sql`
+```bash
+mysql -u usuario -p nombre_bd < Backend/database/structure.sql
+```
 
-Opción B (por archivos):
+Este archivo crea todas las tablas, roles
 
-- Ejecutar: `Backend/database/migrations/001_init.sql`
-- (Opcional) Ejecutar seeds demo:
-  - `Backend/database/seeds/demo_seed.sql` (local)
-  - `Backend/database/seeds/full_demo_seed.sql` (más completo)
-
-Roles vigentes: `admin`, `gerente`/`gerencia`, `jefe`/`jefatura`, `empleado`.
+Roles vigentes: `admin`, `gerente`, `jefe`, `empleado`.
 
 ### 2) Backend (API)
 
@@ -82,5 +76,3 @@ Portal: `http://localhost:5173/portal/login`
 - **Planificación**: planificación semanal (vista lista y semanal).
 - **Solicitudes**: creación y aprobación por etapas (jefatura → gerencia → administración).
 - **Blogs**: creación y pendientes (roles con permiso según menú del portal).
-
-Detalle paso a paso: ver [GUIA_USUARIO_PORTAL.md](GUIA_USUARIO_PORTAL.md).

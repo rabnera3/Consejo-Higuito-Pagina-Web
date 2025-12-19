@@ -9,7 +9,6 @@ use App\Controllers\Api\EmployeesController;
 use App\Controllers\Api\PlanificacionController;
 use App\Controllers\Api\NotificationController;
 use App\Controllers\Api\RequestsController;
-use App\Controllers\Api\FieldController;
 use App\Controllers\Api\CronController;
 use App\Middleware\CorsMiddleware;
 use App\Middleware\OptionalAuthMiddleware;
@@ -28,7 +27,6 @@ return static function (App $app): void {
     $planificacionController = new PlanificacionController();
     $notificationController = new NotificationController();
     $requestsController = new RequestsController();
-    $fieldController = new FieldController();
     $cronController = new CronController();
 
     // Root endpoint to advertise API
@@ -55,7 +53,7 @@ return static function (App $app): void {
     });
 
     // API group (CORS ahora es global)
-    $app->group('/api', function ($group) use ($authController, $blogController, $departmentController, $employeesController, $planificacionController, $notificationController, $requestsController, $fieldController, $cronController, $requireAuth, $optionalAuth, $app) {
+    $app->group('/api', function ($group) use ($authController, $blogController, $departmentController, $employeesController, $planificacionController, $notificationController, $requestsController, $cronController, $requireAuth, $optionalAuth, $app) {
         // Public routes
         $group->post('/auth/login', [$authController, 'login']);
         $group->post('/cron/close-planning', [$cronController, 'closeWeeklyPlanning']);
@@ -66,7 +64,7 @@ return static function (App $app): void {
         $group->get('/blog/slug/{slug}', [$blogController, 'showBySlug'])->add($optionalAuth);
 
         // Protected routes
-        $group->group('', function ($protected) use ($authController, $blogController, $departmentController, $employeesController, $planificacionController, $notificationController, $requestsController, $fieldController) {
+        $group->group('', function ($protected) use ($authController, $blogController, $departmentController, $employeesController, $planificacionController, $notificationController, $requestsController) {
             $protected->post('/auth/logout', [$authController, 'logout']);
             $protected->get('/auth/me', [$authController, 'me']);
             $protected->get('/empleados', [$employeesController, 'index']);
@@ -99,17 +97,6 @@ return static function (App $app): void {
             $protected->post('/notifications/{id}/read', [$notificationController, 'markAsRead']);
             $protected->post('/notifications/read-all', [$notificationController, 'markAllAsRead']);
             $protected->delete('/notifications/delete-all', [$notificationController, 'deleteAll']);
-
-            // Field routes
-            $protected->get('/visit-reports', [$fieldController, 'listVisitReports']);
-            $protected->get('/visit-reports/{id}', [$fieldController, 'getVisitReport']);
-            $protected->post('/visit-reports', [$fieldController, 'createVisitReport']);
-            $protected->put('/visit-reports/{id}', [$fieldController, 'updateVisitReport']);
-            $protected->post('/visit-reports/upload-photo', [$fieldController, 'uploadVisitPhoto']);
-            $protected->delete('/visit-reports/{id}', [$fieldController, 'deleteVisitReport']);
-            $protected->get('/field-logs', [$fieldController, 'listFieldLogs']);
-            $protected->post('/field-logs', [$fieldController, 'createFieldLog']);
-            $protected->delete('/field-logs/{id}', [$fieldController, 'deleteFieldLog']);
 
             // Requests routes
             $protected->get('/requests/my', [$requestsController, 'getMyRequests']);
