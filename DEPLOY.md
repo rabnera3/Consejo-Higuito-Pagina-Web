@@ -4,6 +4,43 @@ Esta guía explica cómo desplegar la aplicación completa (Frontend + Backend +
 
 ---
 
+## 🏢 Tipos de Hosting Compatibles
+
+### ✅ **Hosting Compartido con PHP** (Recomendado para este proyecto)
+
+Este proyecto requiere un hosting que soporte **PHP + MySQL**. Los planes compatibles incluyen:
+
+| Proveedor | Plan Mínimo | PHP | MySQL | Precio aprox. |
+|-----------|-------------|-----|-------|---------------|
+| **Hostinger** | Premium o Business | ✅ 8.1+ | ✅ | ~$3-5/mes |
+| **SiteGround** | StartUp | ✅ 8.1+ | ✅ | ~$4-7/mes |
+| **Bluehost** | Basic | ✅ 8.1+ | ✅ | ~$3-5/mes |
+| **Namecheap** | Stellar | ✅ 8.1+ | ✅ | ~$2-4/mes |
+| **A2 Hosting** | Startup | ✅ 8.1+ | ✅ | ~$3-5/mes |
+| **GoDaddy** | Economy | ✅ 8.0+ | ✅ | ~$5-8/mes |
+
+### ❌ **Hosting NO Compatible**
+
+| Tipo | Por qué no funciona |
+|------|---------------------|
+| **Netlify** | Solo archivos estáticos, no ejecuta PHP |
+| **Vercel** | Solo serverless, no PHP tradicional |
+| **GitHub Pages** | Solo HTML/CSS/JS estático |
+| **Firebase Hosting** | Solo archivos estáticos |
+| **Cloudflare Pages** | Solo archivos estáticos |
+
+> 💡 **Nota**: Si solo quisieras el Frontend sin backend, sí podrías usar Netlify/Vercel. Pero este proyecto necesita el API PHP para login, empleados, planificación, etc.
+
+### 🔧 **Alternativas Avanzadas** (para desarrolladores)
+
+| Opción | Descripción |
+|--------|-------------|
+| **VPS (DigitalOcean, Linode)** | Control total, requiere configurar servidor |
+| **AWS EC2 / Lightsail** | Más potente, más complejo |
+| **Railway / Render** | Soportan PHP pero con configuración extra |
+
+---
+
 ## 📋 Requisitos Previos
 
 ### En tu máquina local:
@@ -319,4 +356,4 @@ Si encuentras problemas:
 
 ---
 
-**Última actualización:** Diciembre 2024
+**Última actualización:** Diciembre 2025

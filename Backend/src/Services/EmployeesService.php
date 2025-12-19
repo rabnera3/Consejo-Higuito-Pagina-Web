@@ -6,6 +6,8 @@ namespace App\Services;
 
 use App\Models\Department;
 use App\Models\Employee;
+use App\Models\User;
+use App\Models\Role;
 
 final class EmployeesService
 {
@@ -189,5 +191,57 @@ final class EmployeesService
         $employee->update(['photo_url' => $photoUrl]);
 
         return $photoUrl;
+    }
+
+    /**
+     * Crear un nuevo empleado con su usuario asociado
+     */
+    public function createEmployee(array $data): array
+    {
+        // Verificar si el email ya existe
+        $existingUser = User::where('email', $data['email'])->first();
+        if ($existingUser) {
+            throw new \RuntimeException('Ya existe un usuario con ese correo electrónico');
+        }
+
+        // Obtener rol (por defecto 'empleado')
+        $roleName = $data['role'] ?? 'empleado';
+        $role = Role::where('slug', $roleName)->orWhere('name', $roleName)->first();
+        if (!$role) {
+            $role = Role::where('slug', 'empleado')->first();
+        }
+
+        // Crear usuario
+        $user = User::create([
+            'name' => $data['full_name'],
+            'email' => $data['email'],
+            'password_hash' => password_hash($data['password'], PASSWORD_DEFAULT),
+            'role_id' => $role->id,
+            'department_id' => !empty($data['department_id']) ? (int) $data['department_id'] : null,
+            'status' => 'active',
+        ]);
+
+        // Crear empleado
+        $employee = Employee::create([
+            'user_id' => $user->id,
+            'full_name' => $data['full_name'],
+            'email' => $data['email'],
+            'job_title' => $data['job_title'] ?? null,
+            'department_id' => !empty($data['department_id']) ? (int) $data['department_id'] : null,
+            'municipio' => $data['municipio'] ?? null,
+            'phone' => $data['phone'] ?? null,
+            'cedula' => $data['cedula'] ?? null,
+            'hire_date' => $data['hire_date'] ?? date('Y-m-d'),
+            'employment_status' => 'Activa',
+            'vacation_days_balance' => 0,
+        ]);
+
+        return [
+            'id' => $employee->id,
+            'user_id' => $user->id,
+            'nombre' => $employee->full_name,
+            'email' => $employee->email,
+            'rol' => $role->name,
+        ];
     }
 }

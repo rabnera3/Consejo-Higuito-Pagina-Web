@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { fetchEmployees, isApiHalted, resetApiFailureState, EmployeeSummary } from '../../lib/api';
+import { fetchEmployees, isApiHalted, resetApiFailureState, EmployeeSummary, createEmployee, fetchDepartments, Department } from '../../lib/api';
+import { useAuth } from '../../context/AuthContext';
 
 type EmployeeRecord = {
   id: number | string;
@@ -102,6 +103,25 @@ export default function PortalAdminEmployeesPage() {
   const [halted, setHalted] = useState(false);
   const filtersActive = Boolean(searchTerm.trim() || departmentFilter !== 'todos' || statusFilter !== 'todos');
 
+  // Estados para modal de crear empleado
+  const { user } = useAuth();
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [departments, setDepartments] = useState<Department[]>([]);
+  const [createLoading, setCreateLoading] = useState(false);
+  const [createError, setCreateError] = useState('');
+  const [newEmployee, setNewEmployee] = useState({
+    full_name: '',
+    email: '',
+    password: '',
+    job_title: '',
+    department_id: '',
+    municipio: '',
+    phone: '',
+    cedula: '',
+    role: 'empleado',
+  });
+  const isGerente = user?.role === 'gerente' || user?.role === 'gerencia';
+
   const loadEmployees = useCallback(async () => {
     if (isApiHalted()) {
       setHalted(true);
@@ -152,6 +172,64 @@ export default function PortalAdminEmployeesPage() {
       window.removeEventListener('api:resumed', onResume);
     };
   }, [loadEmployees]);
+
+  // Cargar departamentos cuando se abre el modal
+  useEffect(() => {
+    if (showCreateModal && departments.length === 0) {
+      fetchDepartments().then((resp) => {
+        if (resp.success && Array.isArray(resp.data)) {
+          setDepartments(resp.data);
+        }
+      });
+    }
+  }, [showCreateModal, departments.length]);
+
+  // Función para crear empleado
+  const handleCreateEmployee = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newEmployee.full_name || !newEmployee.email || !newEmployee.password) {
+      setCreateError('Nombre, email y contraseña son requeridos');
+      return;
+    }
+    setCreateLoading(true);
+    setCreateError('');
+    try {
+      const payload = {
+        full_name: newEmployee.full_name,
+        email: newEmployee.email,
+        password: newEmployee.password,
+        job_title: newEmployee.job_title || undefined,
+        department_id: newEmployee.department_id ? Number(newEmployee.department_id) : undefined,
+        municipio: newEmployee.municipio || undefined,
+        phone: newEmployee.phone || undefined,
+        cedula: newEmployee.cedula || undefined,
+        role: newEmployee.role || 'empleado',
+      };
+      const resp = await createEmployee(payload);
+      if (resp.success) {
+        setShowCreateModal(false);
+        setNewEmployee({
+          full_name: '',
+          email: '',
+          password: '',
+          job_title: '',
+          department_id: '',
+          municipio: '',
+          phone: '',
+          cedula: '',
+          role: 'empleado',
+        });
+        setActionStatus({ type: 'success', message: 'Empleado creado exitosamente' });
+        loadEmployees();
+      } else {
+        setCreateError(resp.error || 'Error al crear empleado');
+      }
+    } catch (err: any) {
+      setCreateError(err?.message || 'Error de red');
+    } finally {
+      setCreateLoading(false);
+    }
+  };
 
   const filteredEmployees = useMemo(() => {
     const query = searchTerm.trim().toLowerCase();
@@ -315,11 +393,28 @@ export default function PortalAdminEmployeesPage() {
     <>
     <section className="cih-card" aria-labelledby="portal-admin-title">
       <div className="cih-card__body">
-        <h2 className="cih-card__title" id="portal-admin-title">Administración de empleados</h2>
-        <p className="cih-card__subtitle">
-          Consolida altas, bajas y licencias con la data existente del portal. Usa los filtros para centrarte en la unidad
-          o municipio que necesitas antes de sincronizar con los servicios del backend.
-        </p>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
+          <div>
+            <h2 className="cih-card__title" id="portal-admin-title">Administración de empleados</h2>
+            <p className="cih-card__subtitle">
+              Consolida altas, bajas y licencias con la data existente del portal. Usa los filtros para centrarte en la unidad
+              o municipio que necesitas antes de sincronizar con los servicios del backend.
+            </p>
+          </div>
+          {isGerente && (
+            <button
+              type="button"
+              className="cih-btn cih-btn--primary"
+              onClick={() => setShowCreateModal(true)}
+              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+            >
+              <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+              </svg>
+              Nuevo Empleado
+            </button>
+          )}
+        </div>
 
         {(error || halted) && (
           <div
@@ -775,6 +870,215 @@ export default function PortalAdminEmployeesPage() {
         }
       }
     `}</style>
+
+    {/* Modal Crear Empleado */}
+    {showCreateModal && (
+      <div
+        className="cih-modal-backdrop"
+        style={{
+          position: 'fixed',
+          inset: 0,
+          backgroundColor: 'rgba(15, 23, 42, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+          padding: '1rem',
+        }}
+        onClick={() => setShowCreateModal(false)}
+      >
+        <div
+          className="cih-modal"
+          style={{
+            backgroundColor: '#fff',
+            borderRadius: '12px',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+            maxWidth: '550px',
+            width: '100%',
+            maxHeight: '90vh',
+            overflowY: 'auto',
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div style={{ padding: '1.5rem', borderBottom: '1px solid #e2e8f0' }}>
+            <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 600, color: '#0f172a' }}>
+              Crear Nuevo Empleado
+            </h3>
+            <p style={{ margin: '0.5rem 0 0', fontSize: '0.875rem', color: '#64748b' }}>
+              Complete los datos del nuevo empleado
+            </p>
+          </div>
+
+          <form onSubmit={handleCreateEmployee} style={{ padding: '1.5rem' }}>
+            {createError && (
+              <div
+                role="alert"
+                style={{
+                  marginBottom: '1rem',
+                  padding: '0.75rem 1rem',
+                  borderRadius: '0.5rem',
+                  backgroundColor: '#fee2e2',
+                  color: '#7f1d1d',
+                  fontSize: '0.875rem',
+                }}
+              >
+                {createError}
+              </div>
+            )}
+
+            <div style={{ display: 'grid', gap: '1rem' }}>
+              <div className="cih-form-group">
+                <label className="cih-label">Nombre completo *</label>
+                <input
+                  type="text"
+                  className="cih-input"
+                  value={newEmployee.full_name}
+                  onChange={(e) => setNewEmployee({ ...newEmployee, full_name: e.target.value })}
+                  placeholder="Ej: María López García"
+                  required
+                />
+              </div>
+
+              <div className="cih-form-group">
+                <label className="cih-label">Correo electrónico *</label>
+                <input
+                  type="email"
+                  className="cih-input"
+                  value={newEmployee.email}
+                  onChange={(e) => setNewEmployee({ ...newEmployee, email: e.target.value })}
+                  placeholder="correo@consejohiguito.gob.hn"
+                  required
+                />
+              </div>
+
+              <div className="cih-form-group">
+                <label className="cih-label">Contraseña *</label>
+                <input
+                  type="password"
+                  className="cih-input"
+                  value={newEmployee.password}
+                  onChange={(e) => setNewEmployee({ ...newEmployee, password: e.target.value })}
+                  placeholder="Mínimo 6 caracteres"
+                  minLength={6}
+                  required
+                />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div className="cih-form-group">
+                  <label className="cih-label">Cargo</label>
+                  <input
+                    type="text"
+                    className="cih-input"
+                    value={newEmployee.job_title}
+                    onChange={(e) => setNewEmployee({ ...newEmployee, job_title: e.target.value })}
+                    placeholder="Ej: Técnico"
+                  />
+                </div>
+
+                <div className="cih-form-group">
+                  <label className="cih-label">Unidad</label>
+                  <select
+                    className="cih-input"
+                    value={newEmployee.department_id}
+                    onChange={(e) => setNewEmployee({ ...newEmployee, department_id: e.target.value })}
+                    style={{ width: '100%' }}
+                  >
+                    <option value="">Seleccionar...</option>
+                    {departments.map((dept) => (
+                      <option key={dept.id} value={dept.id}>
+                        {dept.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div className="cih-form-group">
+                  <label className="cih-label">Municipio</label>
+                  <input
+                    type="text"
+                    className="cih-input"
+                    value={newEmployee.municipio}
+                    onChange={(e) => setNewEmployee({ ...newEmployee, municipio: e.target.value })}
+                    placeholder="Ej: San Pedro Sula"
+                  />
+                </div>
+
+                <div className="cih-form-group">
+                  <label className="cih-label">Teléfono</label>
+                  <input
+                    type="tel"
+                    className="cih-input"
+                    value={newEmployee.phone}
+                    onChange={(e) => setNewEmployee({ ...newEmployee, phone: e.target.value })}
+                    placeholder="Ej: 9999-9999"
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div className="cih-form-group">
+                  <label className="cih-label">Cédula</label>
+                  <input
+                    type="text"
+                    className="cih-input"
+                    value={newEmployee.cedula}
+                    onChange={(e) => setNewEmployee({ ...newEmployee, cedula: e.target.value })}
+                    placeholder="0000-0000-00000"
+                  />
+                </div>
+
+                <div className="cih-form-group">
+                  <label className="cih-label">Rol</label>
+                  <select
+                    className="cih-input"
+                    value={newEmployee.role}
+                    onChange={(e) => setNewEmployee({ ...newEmployee, role: e.target.value })}
+                    style={{ width: '100%' }}
+                  >
+                    <option value="empleado">Empleado</option>
+                    <option value="jefe">Jefe de Unidad</option>
+                    <option value="gerente">Gerente</option>
+                    <option value="admin">Administrador</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ marginTop: '1.5rem', display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
+              <button
+                type="button"
+                className="cih-btn cih-btn--ghost"
+                onClick={() => setShowCreateModal(false)}
+                disabled={createLoading}
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                className="cih-btn cih-btn--primary"
+                disabled={createLoading}
+                style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+              >
+                {createLoading ? (
+                  <>
+                    <svg className="animate-spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="10" strokeOpacity="0.25" />
+                      <path d="M12 2a10 10 0 0 1 10 10" strokeLinecap="round" />
+                    </svg>
+                    Creando...
+                  </>
+                ) : (
+                  'Crear Empleado'
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    )}
     </>
   );
 }

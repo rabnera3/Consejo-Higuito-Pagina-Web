@@ -173,6 +173,23 @@ export function updateEmployee(id: number, data: any) {
   return apiRequest<{ success: boolean; message: string }>('PUT', `/api/empleados/${id}`, data);
 }
 
+export interface CreateEmployeeData {
+  full_name: string;
+  email: string;
+  password: string;
+  job_title?: string;
+  department_id?: number;
+  municipio?: string;
+  phone?: string;
+  cedula?: string;
+  hire_date?: string;
+  role?: string;
+}
+
+export function createEmployee(data: CreateEmployeeData) {
+  return apiRequest<{ success: boolean; message: string; data: { id: number; user_id: number; nombre: string; email: string; rol: string } }>('POST', '/api/empleados', data);
+}
+
 export function uploadEmployeePhoto(id: number, file: File) {
   const formData = new FormData();
   formData.append('image', file);

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Controllers\Api\AuthController;
 use App\Controllers\Api\BlogController;
+use App\Controllers\Api\DepartmentController;
 use App\Controllers\Api\EmployeesController;
 use App\Controllers\Api\PlanificacionController;
 use App\Controllers\Api\NotificationController;
@@ -22,6 +23,7 @@ return static function (App $app): void {
 
     $authController = new AuthController();
     $blogController = new BlogController();
+    $departmentController = new DepartmentController();
     $employeesController = new EmployeesController();
     $planificacionController = new PlanificacionController();
     $notificationController = new NotificationController();
@@ -53,7 +55,7 @@ return static function (App $app): void {
     });
 
     // API group (CORS ahora es global)
-    $app->group('/api', function ($group) use ($authController, $blogController, $employeesController, $planificacionController, $notificationController, $requestsController, $fieldController, $cronController, $requireAuth, $optionalAuth, $app) {
+    $app->group('/api', function ($group) use ($authController, $blogController, $departmentController, $employeesController, $planificacionController, $notificationController, $requestsController, $fieldController, $cronController, $requireAuth, $optionalAuth, $app) {
         // Public routes
         $group->post('/auth/login', [$authController, 'login']);
         $group->post('/cron/close-planning', [$cronController, 'closeWeeklyPlanning']);
@@ -64,10 +66,14 @@ return static function (App $app): void {
         $group->get('/blog/slug/{slug}', [$blogController, 'showBySlug'])->add($optionalAuth);
 
         // Protected routes
-        $group->group('', function ($protected) use ($authController, $blogController, $employeesController, $planificacionController, $notificationController, $requestsController, $fieldController) {
+        $group->group('', function ($protected) use ($authController, $blogController, $departmentController, $employeesController, $planificacionController, $notificationController, $requestsController, $fieldController) {
             $protected->post('/auth/logout', [$authController, 'logout']);
             $protected->get('/auth/me', [$authController, 'me']);
             $protected->get('/empleados', [$employeesController, 'index']);
+            $protected->post('/empleados', [$employeesController, 'create']);
+
+            // Departments
+            $protected->get('/departments', [$departmentController, 'index']);
 
             $protected->get('/empleados/{id}', [$employeesController, 'show']);
             $protected->put('/empleados/{id}', [$employeesController, 'update']);

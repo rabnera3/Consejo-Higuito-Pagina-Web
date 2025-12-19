@@ -47,6 +47,65 @@ final class EmployeesController
             ->withStatus(200);
     }
 
+    /**
+     * Crear nuevo empleado - Solo gerente puede crear
+     */
+    public function create(Request $request, Response $response): Response
+    {
+        /** @var array|null $user */
+        $user = $request->getAttribute('user');
+        
+        // Verificar que solo gerente puede crear empleados
+        $allowedRoles = ['gerente', 'gerencia'];
+        if (!$user || !in_array($user['role'] ?? '', $allowedRoles)) {
+            $response->getBody()->write(json_encode([
+                'success' => false,
+                'message' => 'Solo el gerente puede crear empleados'
+            ]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(403);
+        }
+
+        $data = (array) $request->getParsedBody();
+
+        // Validaciones básicas
+        $requiredFields = ['full_name', 'email', 'password'];
+        foreach ($requiredFields as $field) {
+            if (empty($data[$field])) {
+                $response->getBody()->write(json_encode([
+                    'success' => false,
+                    'message' => "El campo {$field} es requerido"
+                ]));
+                return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+            }
+        }
+
+        // Validar email formato
+        if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+            $response->getBody()->write(json_encode([
+                'success' => false,
+                'message' => 'El formato del email no es válido'
+            ]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+
+        try {
+            $result = $this->service->createEmployee($data);
+            
+            $response->getBody()->write(json_encode([
+                'success' => true,
+                'message' => 'Empleado creado exitosamente',
+                'data' => $result
+            ]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(201);
+        } catch (\Exception $e) {
+            $response->getBody()->write(json_encode([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+    }
+
     public function show(Request $request, Response $response, array $args): Response
     {
         $id = (int) ($args['id'] ?? 0);
